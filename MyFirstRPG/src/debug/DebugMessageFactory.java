@@ -11,7 +11,7 @@ import java.util.Date;
 public class DebugMessageFactory {
 
 	public static boolean DEBUG_MODE = true;
-	public static boolean WRITE_LOG_FILE = true;
+	public static boolean WRITE_LOG_FILE = false;
 	public static String LOG_FILE = "/home/sam/Desktop/GameServer.log";
 	
 	public static void printInfoMessage(String message) {
@@ -46,7 +46,6 @@ public class DebugMessageFactory {
 	
 	private static void appendToFile(String s) {
 		try {
-			
 			BufferedWriter bw = new BufferedWriter(new FileWriter(new File(LOG_FILE), true));
 			bw.write(s);
 			bw.flush();
