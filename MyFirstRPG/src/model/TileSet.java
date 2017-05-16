@@ -4,6 +4,8 @@ import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.HashSet;
+
 import javax.imageio.ImageIO;
 
 public class TileSet {
@@ -11,9 +13,16 @@ public class TileSet {
 	public static final int TILEWIDTH = 64, TILEHEIGHT = 64;
 
 	private BufferedImage[] tiles;
+	
+	@SuppressWarnings("rawtypes")
+	public HashSet hs;
 
-	public TileSet(BufferedImage bimg, int sizeX, int sizeY, int space) {
-		tiles = new BufferedImage[sizeX * sizeY];
+	@SuppressWarnings("rawtypes")
+	public TileSet(BufferedImage bimg, int sizeX, int sizeY, int space, HashSet hs) {
+		
+		this.hs = hs;
+		
+		tiles = new BufferedImage[sizeX * sizeY]; 
 		
 		int i = 0;
 		for (int y = 0; y < sizeY; y++) {
@@ -23,7 +32,10 @@ public class TileSet {
 		}
 	}
 	
-	public TileSet(String path, int sizeX, int sizeY, int space) {
+	@SuppressWarnings("rawtypes")
+	public TileSet(String path, int sizeX, int sizeY, int space, HashSet hs) {
+		
+		this.hs = hs;
 		
 		tiles = new BufferedImage[sizeX * sizeY];
 		BufferedImage tileSet;

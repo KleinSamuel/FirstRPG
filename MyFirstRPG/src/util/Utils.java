@@ -32,7 +32,7 @@ public class Utils {
 			return -1;
 		}
 	}
-	
+
 	/**
 	 * Read a file and get the string representation of it
 	 * 
@@ -41,43 +41,43 @@ public class Utils {
 	 */
 	public static String loadFileAsString(String path) {
 		StringBuilder builder = new StringBuilder();
-		
+
 		FileReader file = null;
-		
+
 		try {
 			file = new FileReader(new File(path));
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
-		
-		if(file != null) {
+
+		if (file != null) {
 			try {
 				BufferedReader br = new BufferedReader(file);
 				String line = null;
-				while((line = br.readLine()) != null) {
-					builder.append(line+"\n");
+				while ((line = br.readLine()) != null) {
+					builder.append(line + "\n");
 				}
 				br.close();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
-		
+
 		return builder.toString();
 	}
-	
-	public static byte[] extractBytes (String ImageName) {
-		
+
+	public static byte[] extractBytes(String ImageName) {
+
 		try {
-			
+
 			// open image
 			File imgPath = new File(ImageName);
 			BufferedImage bufferedImage = ImageIO.read(imgPath);
-			
+
 			// get DataBufferBytes from Raster
-			WritableRaster raster = bufferedImage .getRaster();
-			DataBufferByte data   = (DataBufferByte) raster.getDataBuffer();
-			
+			WritableRaster raster = bufferedImage.getRaster();
+			DataBufferByte data = (DataBufferByte) raster.getDataBuffer();
+
 			return data.getData();
 
 		} catch (IOException e) {
@@ -85,5 +85,15 @@ public class Utils {
 		}
 		return null;
 	}
-	
+
+	public static boolean containsBlock(int[][] touched) {
+		for (int j = 0; j < touched.length; j++) {
+			for (int i = 0; i < touched[j].length; i++) {
+				if (touched[j][i] > 65535)
+					return true;
+			}
+		}
+		return false;
+	}
+
 }

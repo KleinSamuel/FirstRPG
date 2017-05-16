@@ -3,10 +3,10 @@ package model;
 import java.awt.Canvas;
 import java.awt.Graphics;
 import java.awt.Point;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import java.awt.color.CMMException;
 import java.awt.image.BufferStrategy;
-import java.security.GeneralSecurityException;
+import java.util.Arrays;
+import java.util.HashSet;
 
 import debug.DebugMessageFactory;
 
@@ -25,6 +25,7 @@ public class Game implements Runnable {
 	Level level;
 	Player player;
 	KeyManager keyManager;
+	private Camera camera;
 
 	BufferStrategy bufferStrategy;
 	Graphics graphics;
@@ -57,11 +58,17 @@ public class Game implements Runnable {
 		
 		keyManager = new KeyManager();
 		screen.getCanvas().addKeyListener(keyManager);
-
-		TileSet tileset = new TileSet(serverConnection.tileset, 12, 12, 3);
-		level = new Level(serverConnection.map, tileset, true);
+		
+		TileSet[] tileSet = new TileSet[1];
+		@SuppressWarnings({ "rawtypes", "unchecked" })
+		HashSet hs = new HashSet(Arrays.asList(0, 1, 2, 12, 14, 24, 25, 26));
+		tileSet[0] = new TileSet(serverConnection.tileset, 12 /*sizeX*/, 12/*sizeY*/, 3 /*border*/, hs);
+		
+		level = new Level(this, serverConnection.map, tileSet, true);
 		SpriteSheet playerSprite = new SpriteSheet(serverConnection.playerSheet, 3, 4, 64, 64);
-		player = new Player(320, 320, playerSprite);
+		player = new Player(this, level, 320, 320, playerSprite);
+		
+		camera = new Camera(level.getSizeX(), level.getSizeY());
 
 		while (running) {
 
@@ -133,6 +140,10 @@ public class Game implements Runnable {
 		}
 		
 		return new Point(xMove, yMove);
+	}
+	
+	public Camera getGameCamera() {
+		return camera;
 	}
 
 	public static void main(String[] args) {
