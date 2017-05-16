@@ -1,4 +1,4 @@
-package model;
+package client.gui;
 
 public class Camera {
 

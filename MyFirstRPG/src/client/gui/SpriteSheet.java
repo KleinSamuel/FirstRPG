@@ -1,4 +1,4 @@
-package model;
+package client.gui;
 
 import java.awt.image.BufferedImage;
 import java.io.File;

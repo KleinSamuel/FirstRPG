@@ -67,7 +67,7 @@ public class ServerThread extends Thread{
 		case "download_tileset":
 			sendFile("/home/sam/RPG/rpg.png");
 		case "download_playersheet":
-			sendFile("/home/sam/RPG/player.png");
+			sendFile("/home/sam/RPG/player_v_3_small.png");
 		}
 		
 	}

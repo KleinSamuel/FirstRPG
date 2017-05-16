@@ -1,4 +1,4 @@
-package model;
+package client.gui;
 
 import java.awt.Canvas;
 import java.awt.Graphics;
@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 
 import debug.DebugMessageFactory;
+import model.ClientConnectionEstablisher;
 
 public class Game implements Runnable {
 
@@ -65,6 +66,7 @@ public class Game implements Runnable {
 		tileSet[0] = new TileSet(serverConnection.tileset, 12 /*sizeX*/, 12/*sizeY*/, 3 /*border*/, hs);
 		
 		level = new Level(this, serverConnection.map, tileSet, true);
+		
 		SpriteSheet playerSprite = new SpriteSheet(serverConnection.playerSheet, 3, 4, 64, 64);
 		player = new Player(this, level, 320, 320, playerSprite);
 		
