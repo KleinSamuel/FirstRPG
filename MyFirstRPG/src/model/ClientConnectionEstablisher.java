@@ -1,14 +1,14 @@
 package model;
 
 import java.awt.image.BufferedImage;
-import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInputStream;
 import java.io.OutputStream;
 import java.net.Socket;
-
-import javax.imageio.ImageIO;
 
 import debug.DebugMessageFactory;
 
@@ -19,11 +19,13 @@ public class ClientConnectionEstablisher {
 	
 	private Socket client;
 	private DataOutputStream outputStream;
-	private DataInputStream inputStream;
+//	private DataInputStream inputStream;
+	private ObjectInputStream objInputStream;
 	
 	/* game state stuff TODO: outsource this shit */
 	public String map;
 	public BufferedImage tileset;
+	public BufferedImage playerSheet;
 	
 	public ClientConnectionEstablisher(String servername, String port) {
 		this.servername = servername;
@@ -43,7 +45,7 @@ public class ClientConnectionEstablisher {
 			outputStream = new DataOutputStream(outToServer);
 			
 			InputStream inFromServer = client.getInputStream();
-			inputStream = new DataInputStream(inFromServer);
+			objInputStream = new ObjectInputStream(inFromServer);
 			
 		} catch (IOException e) {
 			DebugMessageFactory.printNormalMessage("COULD NOT CONNECT TO SERVER!");
@@ -59,28 +61,97 @@ public class ClientConnectionEstablisher {
 		DebugMessageFactory.printNormalMessage("DOWNLOADING FILES...");
 		
 		/* download map */
-		map = sendRequest("download_level_1");
+		sendRequest("download_level_1");
+		
+		FileEvent mapEvent = downloadFileEvent();
+		map = FileEvent.byteArrayToString(mapEvent.getFileData());
 		DebugMessageFactory.printNormalMessage("\tDownloaded map.");
 		
 		/* download tileset */
-		try {
-			outputStream.writeUTF("download_tileset");
-			tileset = dowloadImageFromServer();
-			DebugMessageFactory.printNormalMessage("\tDownloaded tileset.");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		sendRequest("download_tileset");
+		
+		FileEvent tilesetEvent = downloadFileEvent();
+		tileset = FileEvent.byteArrayToBufferedImage(tilesetEvent.getFileData());
+		DebugMessageFactory.printNormalMessage("\tDownloaded tileset.");
+		
+		/* download playerSheet */
+		sendRequest("download_playersheet");
+		
+		FileEvent playerEvent = downloadFileEvent();
+		playerSheet = FileEvent.byteArrayToBufferedImage(playerEvent.getFileData());
+		DebugMessageFactory.printNormalMessage("\tDownloaded player spritesheet.");
+		
+		
+		DebugMessageFactory.printNormalMessage("FINISHED DOWNLOADING FILES.");
+		
+		checkCompleteness();
 	}
 	
-	public BufferedImage dowloadImageFromServer() {
+	public void checkCompleteness() {
+		
+		DebugMessageFactory.printNormalMessage("Checking downloaded files...");
+		
+		if(map == null) {
+			DebugMessageFactory.printErrorMessage("MAP DATA MISSING!");
+			System.exit(0);
+		}
+		if(tileset == null) {
+			DebugMessageFactory.printErrorMessage("TILESET DATA MISSING!");
+			System.exit(0);
+		}
+		if(playerSheet == null) {
+			DebugMessageFactory.printErrorMessage("PLAYER SHEET DATA MISSING!");
+			System.exit(0);
+		}
+		
+		DebugMessageFactory.printNormalMessage("Downloaded files are OK!");
+	}
+	
+	public FileEvent downloadFileEvent() {
 		
 		try {
-			BufferedImage bimg = ImageIO.read(ImageIO.createImageInputStream(inputStream));
-			return bimg;
+			
+			FileEvent fileEvent = (FileEvent) objInputStream.readObject();
+
+			if(fileEvent.getStatus().equalsIgnoreCase("Error")) {
+				System.err.println("ERROR");
+				System.exit(0);
+			}
+			
+			return fileEvent;
+			
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		return null;
+	}
+	
+	public void downloadFileFromServer(String path) {
+		
+		try {
+			
+			FileEvent fileEvent = (FileEvent) objInputStream.readObject();
+			
+			if(fileEvent.getStatus().equalsIgnoreCase("Error")) {
+				System.err.println("ERROR");
+				System.exit(0);
+			}
+			
+			File destFile = new File(path);
+			FileOutputStream fout = new FileOutputStream(destFile);
+			
+			fout.write(fileEvent.getFileData());
+			fout.flush();
+			fout.close();
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+		
 	}
 	
 	/**
@@ -89,18 +160,13 @@ public class ClientConnectionEstablisher {
 	 * @param request
 	 * @return
 	 */
-	public String sendRequest(String request) {
+	public void sendRequest(String request) {
 		
 		try {
-			
 			outputStream.writeUTF(request);
-			return inputStream.readUTF();
-			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
-		return null;
 	}
 	
 	public void waitForMillis(long millis) {

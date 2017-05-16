@@ -2,7 +2,6 @@ package model;
 
 import java.awt.Graphics;
 
-import client.gui.TileSet;
 import util.Utils;
 
 public class Level {
