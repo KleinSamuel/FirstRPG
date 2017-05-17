@@ -24,7 +24,7 @@ public class OtherPlayer extends Creature{
 	protected void render(Graphics g) {
 		
 		g.drawImage(image, entityX - game.getGameCamera().getxOffset(), entityY - game.getGameCamera().getyOffset(), width, height, null);
-		drawName(g, game, "Player "+id, Color.WHITE);
+		drawName(g, game, "Player "+id, Color.WHITE, -1);
 		
 	}
 
