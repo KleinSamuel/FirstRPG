@@ -3,21 +3,26 @@ package server;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.HashSet;
 
+import client.UserData;
 import debug.DebugMessageFactory;
 
-public class ServerThreadHandler extends Thread{
+public class ServerThreadHandler extends Thread {
 
 	private ServerSocket m_ServerSocket;
 	final public static int MAX_CLIENTS = 10;
-	final private ServerThread[] m_clientConnections = new ServerThread[MAX_CLIENTS];
+	final public ServerThread[] m_clientConnections = new ServerThread[MAX_CLIENTS];
 	public ServerInformation info;
+	
+	public HashSet<UserData> userData;
 	
 	public ServerThreadHandler(int port) {
 		
 		DebugMessageFactory.printNormalMessage("STARTED SERVER HANDLER THREAD ON PORT ["+port+"]");
 		
 		info = new ServerInformation("SAM_SERVER", port);
+		userData = new HashSet<>();
 		
 		this.m_ServerSocket = null;
 		try {
@@ -28,6 +33,7 @@ public class ServerThreadHandler extends Thread{
 		start();
 	}
 	
+	@SuppressWarnings("static-access")
 	@Override
 	public void run() {
 		while(!this.interrupted()) {
