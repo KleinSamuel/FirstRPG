@@ -22,9 +22,14 @@ public class ClickManager implements MouseListener{
 			System.out.println("CLICKED ON MENU!");
 			return;
 		}
-		
+
 		/* if user clicked on tile; mark this tile and create path to let entity walk */
 		Point p = Utils.screenToGlobal(e.getX(), e.getY(), game.getGameCamera());
+		
+		/* check if player can move to clicked tile if not ignore the click */
+		if(!Utils.checkIfTileIsClickable(game.level, (int)p.getX(), (int)p.getY())) {
+			return;
+		}
 		
 		int globalX = ((int)p.getX()) * TileSet.TILEWIDTH;
 		int globalY = ((int)p.getY()) * TileSet.TILEHEIGHT;
