@@ -1,12 +1,12 @@
 package model;
 
 import java.awt.image.BufferedImage;
-import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 
@@ -18,14 +18,18 @@ public class ClientConnectionEstablisher {
 	private String port;
 	
 	private Socket client;
-	private DataOutputStream outputStream;
-//	private DataInputStream inputStream;
+	private ObjectOutputStream outputStream;
 	private ObjectInputStream objInputStream;
+	
+	public int id;
 	
 	/* game state stuff TODO: outsource this shit */
 	public String map;
 	public BufferedImage tileset;
 	public BufferedImage playerSheet;
+	public BufferedImage tileMarkerImage;
+	
+	public BufferedImage hud_menu;
 	
 	public ClientConnectionEstablisher(String servername, String port) {
 		this.servername = servername;
@@ -42,10 +46,12 @@ public class ClientConnectionEstablisher {
 			client = new Socket(servername, port_as_int);
 			
 			OutputStream outToServer = client.getOutputStream();
-			outputStream = new DataOutputStream(outToServer);
+			outputStream = new ObjectOutputStream(outToServer);
 			
 			InputStream inFromServer = client.getInputStream();
 			objInputStream = new ObjectInputStream(inFromServer);
+			
+			fetchID();
 			
 		} catch (IOException e) {
 			DebugMessageFactory.printNormalMessage("COULD NOT CONNECT TO SERVER!");
@@ -54,6 +60,14 @@ public class ClientConnectionEstablisher {
 		
 		DebugMessageFactory.printNormalMessage("CONNECTION ESTABLISHED!");
 		return true;
+	}
+	
+	private void fetchID() {
+		DebugMessageFactory.printNormalMessage("Fetching id...");
+		sendRequest("get_id");
+		FileEvent event = downloadFileEvent();
+		this.id = Integer.parseInt(FileEvent.byteArrayToString(event.getFileData()));
+		DebugMessageFactory.printNormalMessage("Fetched id! ["+this.id+"]");
 	}
 	
 	public void downloadInitStuff() {
@@ -80,6 +94,20 @@ public class ClientConnectionEstablisher {
 		FileEvent playerEvent = downloadFileEvent();
 		playerSheet = FileEvent.byteArrayToBufferedImage(playerEvent.getFileData());
 		DebugMessageFactory.printNormalMessage("\tDownloaded player spritesheet.");
+		
+		/* download tile marker */
+		sendRequest("download_tilemarker");
+		
+		FileEvent tilemarkerEvent = downloadFileEvent();
+		tileMarkerImage = FileEvent.byteArrayToBufferedImage(tilemarkerEvent.getFileData());
+		DebugMessageFactory.printNormalMessage("\tDownloaded tilemarker.");
+		
+		/* download hud menu button */
+		sendRequest("download_hud_menu");
+		
+		FileEvent hudMenuEvent = downloadFileEvent();
+		hud_menu = FileEvent.byteArrayToBufferedImage(hudMenuEvent.getFileData());
+		DebugMessageFactory.printNormalMessage("\tDownloaded hud menu.");
 		
 		
 		DebugMessageFactory.printNormalMessage("FINISHED DOWNLOADING FILES.");
@@ -154,6 +182,16 @@ public class ClientConnectionEstablisher {
 		
 	}
 	
+	public String downloadPlayerData() {
+		sendRequest("download_player_data");
+		
+		FileEvent tilesetEvent = downloadFileEvent();
+		
+		String result = FileEvent.byteArrayToString(tilesetEvent.getFileData());
+		
+		return result;
+	}
+	
 	/**
 	 * Send request to server as string and retrieve result as string
 	 * 
@@ -162,8 +200,11 @@ public class ClientConnectionEstablisher {
 	 */
 	public void sendRequest(String request) {
 		
+//		DebugMessageFactory.printNormalMessage("Sending request to server ["+request+"].");
+		
 		try {
 			outputStream.writeUTF(request);
+			outputStream.flush();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
