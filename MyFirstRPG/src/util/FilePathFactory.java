@@ -2,8 +2,10 @@ package util;
 
 public class FilePathFactory {
 
+	public static final String BASE_DIR = "/home/sam/RPG/";
+	
 	public static String getPathToUserlist() {
-		return "/home/sam/RPG/user.list";
+		return BASE_DIR+"user.list";
 	}
 	
 	public static String getPathToOutsideOfJar() {
@@ -11,7 +13,11 @@ public class FilePathFactory {
 	}
 
 	public static String getPathToChatlist() {
-		return "/home/sam/RPG/chat.save";
+		return BASE_DIR+"chat.save";
+	}
+	
+	public static String getPathToPlayerSavegame() {
+		return BASE_DIR+"player.save";
 	}
 	
 }
