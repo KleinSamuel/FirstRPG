@@ -46,12 +46,15 @@ public abstract class Creature extends Entity {
 	private int oldDirX;
 	private int oldDirY;
 	
-	public void drawName(Graphics g, Game game, String name, Color c) {
+	public void drawName(Graphics g, Game game, String name, Color c, int level) {
 		g.setFont(Utils.playerNameFont);
 		g.setColor(c);
 		
 		int offsetX = -1*(Utils.getWidthOfString(name, g)/2) + Player.DEFAULT_WIDTH/2;
 		
+		if(level > 0) {
+			g.drawString("Level "+level, entityX - game.getGameCamera().getxOffset() + offsetX, entityY - game.getGameCamera().getyOffset() - OtherPlayer.DEFAULT_NAME_OFFSET - 10);
+		}
 		g.drawString(name, entityX - game.getGameCamera().getxOffset() + offsetX, entityY - game.getGameCamera().getyOffset() - OtherPlayer.DEFAULT_NAME_OFFSET);
 	}
 
