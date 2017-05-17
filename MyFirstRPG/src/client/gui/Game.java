@@ -9,6 +9,7 @@ import java.util.HashSet;
 
 import debug.DebugMessageFactory;
 import model.ClientConnectionEstablisher;
+import util.FilePathFactory;
 import util.Utils;
 
 public class Game implements Runnable {
@@ -32,6 +33,8 @@ public class Game implements Runnable {
 	
 	KeyManager keyManager;
 	ClickManager clickManager;
+	OnCloseListener closeListener;
+	
 	private Camera camera;
 	SpriteSheet playerSprite;
 	HUD hud;
@@ -70,6 +73,9 @@ public class Game implements Runnable {
 		
 		clickManager = new ClickManager(this);
 		screen.getCanvas().addMouseListener(clickManager);
+		
+		closeListener = new OnCloseListener(this);
+		screen.getFrame().addWindowListener(closeListener);
 		
 		TileSet[] tileSet = new TileSet[1];
 		@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -223,6 +229,10 @@ public class Game implements Runnable {
 	
 	public Camera getGameCamera() {
 		return camera;
+	}
+	
+	public void saveGame() {
+		player.content.writeToFile(FilePathFactory.getPathToPlayerSavegame());
 	}
 
 	public static void main(String[] args) {
