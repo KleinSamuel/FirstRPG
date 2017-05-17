@@ -77,4 +77,12 @@ public class Level {
 		return ret;
 	}
 	
+	public int[][][] getTileMap() {
+		return this.tileMap;
+	}
+	
+	public TileSet[] getTileSet() {
+		return this.tileset;
+	}
+	
 }
