@@ -1,17 +1,16 @@
 package server;
 
-import java.awt.image.BufferedImage;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 
-import javax.imageio.ImageIO;
-
+import client.UserData;
 import debug.DebugMessageFactory;
 import model.FileEvent;
 import util.Utils;
@@ -22,54 +21,132 @@ public class ServerThread extends Thread{
 	final private Socket m_connection;
 
 	private ObjectOutputStream outputStream;
+	private ObjectInputStream inputStream;
 	private ServerThreadHandler handler;
+	
+	private UserData userData;
 	
 	public ServerThread(ServerThreadHandler handler, Socket connection, int id) {
 		this.m_id = id;
 		this.m_connection = connection;
 		this.handler = handler;
+		
+		try {
+			
+			inputStream = new ObjectInputStream(m_connection.getInputStream());
+			outputStream = new ObjectOutputStream(m_connection.getOutputStream());
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		/* add data for client */
+		userData = new UserData(id, -100, -100, 0, 0, 0);
+		
 		start();
 	}
 	
 	@SuppressWarnings("static-access")
 	@Override
 	public void run() {
+		DebugMessageFactory.printInfoMessage("(Thread "+m_id+"): Started a new Server Instance!");
+
 		while(!this.interrupted() && m_connection.isConnected()) {
-			DebugMessageFactory.printInfoMessage("(Thread "+m_id+"): Started a new Server Instance!");
 			
 			try {
 				
-				DataInputStream in = new DataInputStream(m_connection.getInputStream());
-				
-				outputStream = new ObjectOutputStream(m_connection.getOutputStream());
-				
-				handleRequest(in.readUTF());
+				handleRequest(inputStream.readUTF());
 				
 			} catch (SocketTimeoutException e) {
 				DebugMessageFactory.printErrorMessage("(Thread "+m_id+"): Socket timed out! Restarting..");
 			} catch (IOException e) {
+//				DebugMessageFactory.printErrorMessage("IOException while waiting for requests!");
 				break;
 			}
 		}
 		DebugMessageFactory.printNormalMessage("(Thread "+m_id+"): THREAD STOPPED BECAUSE OF USER DISCONNECT");
+		
 		close();
 	}
 
 	public void handleRequest(String request) {
 		
-		DebugMessageFactory.printInfoMessage("(Thread "+m_id+"): HANDLING REQUEST:\t{"+request+"}");
+//		DebugMessageFactory.printInfoMessage("(Thread "+m_id+"): HANDLING REQUEST:\t{"+request+"}");
 		
-		switch (request) {
-		case "server_uptime":
-			sendString(""+handler.info.getCurrentUptime());
-		case "download_level_1":
-			sendString(Utils.loadFileAsString("/home/sam/RPG/rpg.map"));
-		case "download_tileset":
-			sendFile("/home/sam/RPG/rpg.png");
-		case "download_playersheet":
-			sendFile("/home/sam/RPG/player_v_3_small.png");
+		/* naive getting userdata "userdata[id,x,y]" */
+		if(request.contains("userdata")) {
+			processUserdataInput(request);
+			return;
 		}
 		
+		switch (request) {
+		
+		case "get_id":
+			sendString(""+m_id);
+			break;
+		
+		case "server_uptime":
+			sendString(""+handler.info.getCurrentUptime());
+			break;
+		
+		case "download_level_1":
+			sendString(Utils.loadFileAsString("/home/sam/RPG/rpg.map"));
+			break;
+		
+		case "download_tileset":
+			sendFile("/home/sam/RPG/rpg.png");
+			break;
+		
+		case "download_playersheet":
+			sendFile("/home/sam/RPG/player_v_3_small.png");
+			break;
+			
+		case "download_tilemarker":
+			sendFile("/home/sam/RPG/tilemarker.png");
+			break;
+			
+		case "download_hud_menu":
+			sendFile("/home/sam/RPG/hud/menu.png");
+			break;
+			
+		case "download_player_data":
+			sendString(packUserInfoAsString());
+			break;
+		}
+		
+	}
+	
+	private String packUserInfoAsString() {
+		
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < handler.m_clientConnections.length; i++) {
+			if(handler.m_clientConnections[i] != null) {
+				UserData data = handler.m_clientConnections[i].userData;
+				sb.append("["+i+","+data.getEntityX()+","+data.getEntityY()+","+data.getxMove()+","+data.getyMove()+","+data.getxPos()+"];");
+			}
+		}
+		
+		return sb.toString();
+	}
+	
+	private void processUserdataInput(String input) {
+		input = input.replace("userdata", "");
+		input = input.substring(1, input.length()-1);
+		String[] arr = input.split(",");
+		
+		int id = Integer.parseInt(arr[0]);
+		int x = Integer.parseInt(arr[1]);
+		int y = Integer.parseInt(arr[2]);
+		int xMove = Integer.parseInt(arr[3]);
+		int yMove = Integer.parseInt(arr[4]);
+		int xPos = Integer.parseInt(arr[5]);
+		
+		userData.setID(id);
+		userData.setEntityX(x);
+		userData.setEntityY(y);
+		userData.setxMove(xMove);
+		userData.setyMove(yMove);
+		userData.setxPos(xPos);
 	}
 	
 	private String getServerInfo() {
