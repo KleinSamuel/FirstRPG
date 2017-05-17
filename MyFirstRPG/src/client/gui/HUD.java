@@ -1,5 +1,6 @@
 package client.gui;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
 
@@ -34,12 +35,24 @@ public class HUD {
 	public void render(Graphics g) {
 		
 		g.setFont(Utils.HUD_FONT);
-		g.drawString("HEALTH: "+health, MARGIN_LEFT, MARGIN_TOP);
-		g.drawString("MANA:   "+mana, MARGIN_LEFT, MARGIN_TOP+PADDING_TOP);
-//		g.setFont(Utils.getHudFont(14));
-//		g.fillRect(MENU.getX(), MENU.getY(), MENU.getWidth(), MENU.getHeight());
+		
+		setTransparentColor(g, 0, 153, 255, 250);
+		g.fillRoundRect(MARGIN_LEFT-10, MARGIN_TOP-10, 170, 65, 30, 30);
+		
+		g.setColor(Color.BLACK);
+		g.drawString("HEALTH: "+player.content.health, MARGIN_LEFT, MARGIN_TOP+15);
+		g.drawString("MANA:    "+player.content.mana, MARGIN_LEFT, MARGIN_TOP+PADDING_TOP+15);
+		
+		setTransparentColor(g, 0, 153, 255, 250);
+		g.fillRoundRect(MENU.getX()-10, MENU.getY()-10, MENU.getWidth()+20, MENU.getHeight()+20, 30, 30);
+		
 		g.drawImage(MENU.getImage(), MENU.getX(), MENU.getY(), MENU.getWidth(), MENU.getHeight(), null);
 		
+	}
+	
+	private void setTransparentColor(Graphics graphics, int r, int b, int g, int alpha) {
+		Color color = new Color(r, b, g, alpha);
+		graphics.setColor(color);
 	}
 	
 	public boolean clickOnMenu(Point p) {
