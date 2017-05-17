@@ -1,5 +1,9 @@
 package client;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+
 public class UserData {
 
 	private int ID;
@@ -40,7 +44,7 @@ public class UserData {
 	}
 
 	public void setID(int ID) {
-		ID = ID;
+		this.ID = ID;
 	}
 
 	public int getxMove() {
