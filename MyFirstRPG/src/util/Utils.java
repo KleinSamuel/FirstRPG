@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import javax.imageio.ImageIO;
 
 import client.gui.Camera;
+import client.gui.Level;
 import client.gui.OtherPlayer;
 import client.gui.TileSet;
 
@@ -240,7 +241,30 @@ public class Utils {
 		}
 		return null;
 	}
-
+	
+	/**
+	 * Check if a tile is clickable.
+	 * Clickable means it is reachable by a creature and thus selectable as target.
+	 * 
+	 * @param x
+	 * @param y
+	 * @return
+	 */
+	public static boolean checkIfTileIsClickable(Level level, int x, int y) {
+		
+		int[][][] tilemap = level.getTileMap();
+		int[][] touched = new int[1][2];
+		touched[0][0] = tilemap[0][x][y];
+		
+		int code = tilemap[0][x][y];
+		
+		if(level.getTileSet()[0].hs.contains(code)) {
+			return false;
+		}
+		
+		return true;
+	}
+	
 	public static boolean containsBlock(int[][] touched) {
 		for (int j = 0; j < touched.length; j++) {
 			for (int i = 0; i < touched[j].length; i++) {
