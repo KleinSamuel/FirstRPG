@@ -1,5 +1,6 @@
 package client.gui;
 
+import java.awt.Color;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 
@@ -12,10 +13,21 @@ public class HUD_Rectangle {
 	
 	private BufferedImage image;
 	
+	private Color color;
+	
 	private Rectangle border;
 	
 	public HUD_Rectangle(BufferedImage image, int x, int y, int width, int height) {
 		this.setImage(image);
+		this.setX(x);
+		this.setY(y);
+		this.setWidth(width);
+		this.setHeight(height);
+		this.setBorder(new Rectangle(x, y, width, height));
+	}
+	
+	public HUD_Rectangle(Color color, int x, int y, int width, int height) {
+		this.setColor(color);
 		this.setX(x);
 		this.setY(y);
 		this.setWidth(width);
@@ -69,6 +81,14 @@ public class HUD_Rectangle {
 
 	public void setImage(BufferedImage image) {
 		this.image = image;
+	}
+
+	public Color getColor() {
+		return color;
+	}
+
+	public void setColor(Color color) {
+		this.color = color;
 	}
 	
 }
