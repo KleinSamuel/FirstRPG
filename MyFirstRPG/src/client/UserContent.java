@@ -109,7 +109,7 @@ public class UserContent implements Serializable {
 					uc.mana = Integer.parseInt(lineArray[1]);
 					break;
 				case "money":
-					uc.mana = Integer.parseInt(lineArray[1]);
+					uc.money = Integer.parseInt(lineArray[1]);
 					break;
 				case "bag_size":
 					uc.bag_size = Integer.parseInt(lineArray[1]);

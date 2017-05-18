@@ -17,8 +17,6 @@ public class Player extends Creature {
 	public static final int MARGIN_HORIZ = 14;
 	public static final int MARGIN_VERT = 2;
 	
-	public int mana;
-	
 	private Game game;
 	
 	private int id;
@@ -28,7 +26,6 @@ public class Player extends Creature {
 	public Player(Game game, Level level, int x, int y, SpriteSheet playerSprite) {
 		super("Player", level, playerSprite, x, y, Entity.DEFAULT_WIDTH, Entity.DEFAULT_HEIGHT, Player.DEFAULT_HEALTH, Player.DEFAULT_SPEED);
 		this.game = game;
-		this.mana = DEFAULT_MANA;
 		
 		loadContent();
 		
