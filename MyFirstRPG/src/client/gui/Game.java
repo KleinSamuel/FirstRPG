@@ -9,6 +9,7 @@ import java.util.HashSet;
 
 import debug.DebugMessageFactory;
 import model.ClientConnectionEstablisher;
+import server.UDP_Client;
 import util.FilePathFactory;
 import util.Utils;
 
@@ -23,6 +24,7 @@ public class Game implements Runnable {
 	public boolean running = true;
 
 	ClientConnectionEstablisher serverConnection;
+	UDP_Client udp_client;
 	
 	private HashSet<OtherPlayer> otherPlayers;
 
@@ -42,11 +44,11 @@ public class Game implements Runnable {
 	BufferStrategy bufferStrategy;
 	Graphics graphics;
 
-	public Game(String servername, String port) {
+	public Game(String servername, String tcp_port, String udp_port) {
 
 		DebugMessageFactory.printNormalMessage("STARTED GAME INSTANCE.");
 
-		serverConnection = new ClientConnectionEstablisher(servername, port);
+		serverConnection = new ClientConnectionEstablisher(servername, tcp_port);
 		boolean flag = serverConnection.openConnection();
 
 		if (!flag) {
@@ -54,6 +56,8 @@ public class Game implements Runnable {
 		}
 
 		serverConnection.downloadInitStuff();
+		
+		udp_client = new UDP_Client(Integer.parseInt(udp_port), servername);
 
 		DebugMessageFactory.printNormalMessage("Starting game now..");
 		new Thread(this).start();
@@ -80,19 +84,18 @@ public class Game implements Runnable {
 		TileSet[] tileSet = new TileSet[1];
 		@SuppressWarnings({ "rawtypes", "unchecked" })
 		HashSet hs = new HashSet(Arrays.asList(0, 1, 2, 12, 14, 24, 25, 26));
-		tileSet[0] = new TileSet(serverConnection.tileset, 12 /*sizeX*/, 12/*sizeY*/, 3 /*border*/, hs);
+		tileSet[0] = new TileSet(serverConnection.fileManager.tileset, 12 /*sizeX*/, 12/*sizeY*/, 3 /*border*/, hs);
 		
-		level = new Level(this, serverConnection.map, tileSet, true);
+		level = new Level(this, serverConnection.fileManager.map, tileSet, true);
 		
-		playerSprite = new SpriteSheet(serverConnection.playerSheet, 3, 4, 64, 64);
+		playerSprite = new SpriteSheet(serverConnection.fileManager.playerSheet, 3, 4, 64, 64);
 		player = new Player(this, level, 320, 320, playerSprite);
-		player.setId(serverConnection.id);
 		
 		Utils.setFontForPlayerName(50);
 		
 		hud = new HUD(this, player);
 		
-		tileMarker = new TileMarker(this, serverConnection.tileMarkerImage, 0, 0);
+		tileMarker = new TileMarker(this, serverConnection.fileManager.tileMarkerImage, 0, 0);
 		
 		camera = new Camera(level.getSizeX(), level.getSizeY());
 		
@@ -115,7 +118,7 @@ public class Game implements Runnable {
 			
 			refreshOthers = System.currentTimeMillis();
 			if(refreshOthers - oldRefreshOthers > maxRefreshTime) {
-				updateOtherPlayers();
+//				updateOtherPlayers();
 				oldRefreshOthers = System.currentTimeMillis();
 			}
 			
@@ -139,6 +142,8 @@ public class Game implements Runnable {
 //		player.setMove(getInput());
 		player.setMove(player.walkOnPath());
 		
+		updateOtherPlayers();
+		
 		player.update();
 		tileMarker.update();
 		
@@ -148,13 +153,14 @@ public class Game implements Runnable {
 	/* TODO: get new player position from server */
 	public void updateOtherPlayers() {
 		
-		String result = serverConnection.downloadPlayerData();
+		String result = udp_client.downloadPlayerData();
 		
 		otherPlayers.clear();
 		
 		String[] resArray = result.split(";");
 		
 		for (int i = 0; i < resArray.length; i++) {
+			
 			String[] data = resArray[i].substring(1, resArray[i].length()-1).split(",");
 			
 			if(Integer.parseInt(data[0]) == player.getId()) {
@@ -233,14 +239,16 @@ public class Game implements Runnable {
 	
 	public void saveGame() {
 		player.content.writeToFile(FilePathFactory.getPathToPlayerSavegame());
+//		udp_client.logoutPlayer(""+player.getId());
 	}
 
 	public static void main(String[] args) {
 
 		String servername = "localhost";
-		String port = "6066";
+		String tcp_port = "6066";
+		String udp_port = "6067";
 
-		Game game = new Game(servername, port);
+		Game game = new Game(servername, tcp_port, udp_port);
 
 	}
 

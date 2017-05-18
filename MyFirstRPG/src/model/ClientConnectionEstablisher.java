@@ -1,6 +1,5 @@
 package model;
 
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -23,17 +22,12 @@ public class ClientConnectionEstablisher {
 	
 	public int id;
 	
-	/* game state stuff TODO: outsource this shit */
-	public String map;
-	public BufferedImage tileset;
-	public BufferedImage playerSheet;
-	public BufferedImage tileMarkerImage;
-	
-	public BufferedImage hud_menu;
+	public FileManager fileManager;
 	
 	public ClientConnectionEstablisher(String servername, String port) {
 		this.servername = servername;
 		this.port = port;
+		this.fileManager = new FileManager();
 	}
 	
 	public boolean openConnection() {
@@ -78,35 +72,35 @@ public class ClientConnectionEstablisher {
 		sendRequest("download_level_1");
 		
 		FileEvent mapEvent = downloadFileEvent();
-		map = FileEvent.byteArrayToString(mapEvent.getFileData());
+		fileManager.map = FileEvent.byteArrayToString(mapEvent.getFileData());
 		DebugMessageFactory.printNormalMessage("\tDownloaded map.");
 		
 		/* download tileset */
 		sendRequest("download_tileset");
 		
 		FileEvent tilesetEvent = downloadFileEvent();
-		tileset = FileEvent.byteArrayToBufferedImage(tilesetEvent.getFileData());
+		fileManager.tileset = FileEvent.byteArrayToBufferedImage(tilesetEvent.getFileData());
 		DebugMessageFactory.printNormalMessage("\tDownloaded tileset.");
 		
 		/* download playerSheet */
 		sendRequest("download_playersheet");
 		
 		FileEvent playerEvent = downloadFileEvent();
-		playerSheet = FileEvent.byteArrayToBufferedImage(playerEvent.getFileData());
+		fileManager.playerSheet = FileEvent.byteArrayToBufferedImage(playerEvent.getFileData());
 		DebugMessageFactory.printNormalMessage("\tDownloaded player spritesheet.");
 		
 		/* download tile marker */
 		sendRequest("download_tilemarker");
 		
 		FileEvent tilemarkerEvent = downloadFileEvent();
-		tileMarkerImage = FileEvent.byteArrayToBufferedImage(tilemarkerEvent.getFileData());
+		fileManager.tileMarkerImage = FileEvent.byteArrayToBufferedImage(tilemarkerEvent.getFileData());
 		DebugMessageFactory.printNormalMessage("\tDownloaded tilemarker.");
 		
 		/* download hud menu button */
 		sendRequest("download_hud_menu");
 		
 		FileEvent hudMenuEvent = downloadFileEvent();
-		hud_menu = FileEvent.byteArrayToBufferedImage(hudMenuEvent.getFileData());
+		fileManager.hudMenuImage = FileEvent.byteArrayToBufferedImage(hudMenuEvent.getFileData());
 		DebugMessageFactory.printNormalMessage("\tDownloaded hud menu.");
 		
 		
@@ -119,16 +113,24 @@ public class ClientConnectionEstablisher {
 		
 		DebugMessageFactory.printNormalMessage("Checking downloaded files...");
 		
-		if(map == null) {
+		if(fileManager.map == null) {
 			DebugMessageFactory.printErrorMessage("MAP DATA MISSING!");
 			System.exit(0);
 		}
-		if(tileset == null) {
+		if(fileManager.tileset == null) {
 			DebugMessageFactory.printErrorMessage("TILESET DATA MISSING!");
 			System.exit(0);
 		}
-		if(playerSheet == null) {
+		if(fileManager.playerSheet == null) {
 			DebugMessageFactory.printErrorMessage("PLAYER SHEET DATA MISSING!");
+			System.exit(0);
+		}
+		if(fileManager.tileMarkerImage == null) {
+			DebugMessageFactory.printErrorMessage("TILE MARKER DATA MISSING!");
+			System.exit(0);
+		}
+		if(fileManager.hudMenuImage == null) {
+			DebugMessageFactory.printErrorMessage("HUD MENU DATA MISSING!");
 			System.exit(0);
 		}
 		

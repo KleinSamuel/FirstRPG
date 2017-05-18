@@ -19,7 +19,7 @@ public class UserContent implements Serializable {
 	private static final long serialVersionUID = 1019829926475566166L;
 	
 	/* id to map object to a unique user */
-	public final int id;
+	public int id;
 	/* users name */
 	public String name;
 	/* users level needed for calculation of several values */

@@ -22,7 +22,7 @@ public class HUD {
 	public HUD(Game game, Player player) {
 		this.game = game;
 		this.player = player;
-		this.MENU = new HUD_Rectangle(game.serverConnection.hud_menu, Game.SCREEN_WIDTH-80, MARGIN_TOP, 50, 50);
+		this.MENU = new HUD_Rectangle(game.serverConnection.fileManager.hudMenuImage, Game.SCREEN_WIDTH-80, MARGIN_TOP, 50, 50);
 	}
 	
 	public void update() {

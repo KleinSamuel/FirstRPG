@@ -31,6 +31,10 @@ public class Player extends Creature {
 		this.mana = DEFAULT_MANA;
 		
 		loadContent();
+		
+		int actualid = game.udp_client.registerPlayer("userdata["+id+","+entityX+","+entityY+","+1+","+1+","+1+"]");
+		content.id = actualid;
+		this.id = actualid;
 	}
 	
 	private void loadContent() {
