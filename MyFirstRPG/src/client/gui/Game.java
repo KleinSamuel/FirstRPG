@@ -9,6 +9,8 @@ import java.util.HashSet;
 
 import debug.DebugMessageFactory;
 import model.ClientConnectionEstablisher;
+import model.items.ItemData;
+import model.items.ItemFactory;
 import server.UDP_Client;
 import util.FilePathFactory;
 import util.Utils;
@@ -27,6 +29,7 @@ public class Game implements Runnable {
 	UDP_Client udp_client;
 	
 	private HashSet<OtherPlayer> otherPlayers;
+	private HashSet<Item> items;
 
 	Screen screen;
 	Level level;
@@ -101,6 +104,8 @@ public class Game implements Runnable {
 		
 		/* init other players */
 		otherPlayers = new HashSet<>();
+		/* init items */
+		items = new HashSet<>();
 		
 		long oldRefreshOthers = System.currentTimeMillis();
 		long refreshOthers = System.currentTimeMillis();
@@ -139,10 +144,10 @@ public class Game implements Runnable {
 	public void update() {
 		keyManager.update();
 		
-//		player.setMove(getInput());
 		player.setMove(player.walkOnPath());
 		
 		updateOtherPlayers();
+		updateItems();
 		
 		player.update();
 		tileMarker.update();
@@ -150,7 +155,6 @@ public class Game implements Runnable {
 		hud.update();
 	}
 	
-	/* TODO: get new player position from server */
 	public void updateOtherPlayers() {
 		
 		String result = udp_client.downloadPlayerData();
@@ -173,6 +177,19 @@ public class Game implements Runnable {
 			op.xPos = Integer.parseInt(data[5]);
 			otherPlayers.add(op);
 		}
+	}
+	
+	public void updateItems() {
+		
+		String result = udp_client.downloadItemData();
+		
+		items.clear();
+		
+		HashSet<ItemData> itemDataSet = ItemFactory.getItemDataFromString(result);
+		
+		for(ItemData data : itemDataSet) {
+			items.add(new Item(data, ItemFactory.getImageForItemId(serverConnection.fileManager, data.getId())));
+		}
 		
 	}
 	
@@ -180,6 +197,12 @@ public class Game implements Runnable {
 		for(OtherPlayer op : otherPlayers) {
 			op.setCurrentImage(op.xMove, op.yMove, op.xPos);
 			op.render(graphics);
+		}
+	}
+	
+	public void renderItems()  {
+		for(Item item : items) {
+			item.render(graphics);
 		}
 	}
 
@@ -213,25 +236,25 @@ public class Game implements Runnable {
 
 	}
 
-	private Point getInput() {
-		int xMove = 0;
-		int yMove = 0;
-		
-		if (keyManager.up) {
-			yMove = -1;
-		}
-		if (keyManager.down) {
-			yMove = 1;
-		}
-		if (keyManager.left) {
-			xMove = -1;
-		}
-		if (keyManager.right) {
-			xMove = 1;
-		}
-		
-		return new Point(xMove, yMove);
-	}
+//	private Point getInput() {
+//		int xMove = 0;
+//		int yMove = 0;
+//		
+//		if (keyManager.up) {
+//			yMove = -1;
+//		}
+//		if (keyManager.down) {
+//			yMove = 1;
+//		}
+//		if (keyManager.left) {
+//			xMove = -1;
+//		}
+//		if (keyManager.right) {
+//			xMove = 1;
+//		}
+//		
+//		return new Point(xMove, yMove);
+//	}
 	
 	public Camera getGameCamera() {
 		return camera;
@@ -239,7 +262,7 @@ public class Game implements Runnable {
 	
 	public void saveGame() {
 		player.content.writeToFile(FilePathFactory.getPathToPlayerSavegame());
-//		udp_client.logoutPlayer(""+player.getId());
+		udp_client.logoutPlayer(""+player.content.id);
 	}
 
 	public static void main(String[] args) {
