@@ -1,18 +1,36 @@
 package client.gui;
 
+import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
-public abstract class Item extends Entity {
+import model.items.ItemData;
+import model.items.ItemFactory;
 
-	protected int weight;
-	protected int value;
-	protected boolean stackable;
+public class Item extends Entity {
 	
-	public Item(String name, BufferedImage bimg, int x, int y, int width, int height, int weight, int value, boolean stackable) {
-		super(name, bimg, x, y, width, height);
-		this.weight = weight;
-		this.height = height;
-		this.stackable = stackable;
+	private ItemData data;
+	
+	public Item(ItemData data, BufferedImage bimg) {
+		super(ItemFactory.items.get(data.getId()).toString(), bimg, data.getX(), data.getY(), ItemFactory.ITEM_WIDTH, ItemFactory.ITEM_HEIGHT);
+		this.data = data;
+	}
+	
+	@Override
+	protected void render(Graphics g) {
+		g.drawImage(image, entityX, entityY, ItemFactory.ITEM_WIDTH, ItemFactory.ITEM_HEIGHT, null);
+	}
+
+	@Override
+	protected void update() {
+		
+	}
+
+	public ItemData getData() {
+		return data;
+	}
+
+	public void setData(ItemData data) {
+		this.data = data;
 	}
 	
 }
