@@ -4,12 +4,25 @@ import java.awt.image.BufferedImage;
 
 public class FileManager {
 
+	/*
+	 * map
+	 */
 	public String map;
 	public BufferedImage tileset;
 	public BufferedImage playerSheet;
 	public BufferedImage tileMarkerImage;
-	public BufferedImage hudMenuImage;
 	
+	/*
+	 * HUD
+	 */
+	
+	public BufferedImage hudMenuImage;
 	public BufferedImage exitImage;
+	
+	/*
+	 * items
+	 */
+	public BufferedImage health_1_image;
+	public BufferedImage mana_1_image;
 	
 }

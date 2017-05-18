@@ -22,6 +22,8 @@ public class UserContent implements Serializable {
 	public int id;
 	/* users name */
 	public String name;
+	public int x;
+	public int y;
 	/* users level needed for calculation of several values */
 	public int level;
 	/* users health */
@@ -41,12 +43,15 @@ public class UserContent implements Serializable {
 	}
 	
 	public void writeToFile(String path) {
+		
 		try {
 			
 			BufferedWriter bw = new BufferedWriter(new FileWriter(path));
 			
 			bw.write("id:"+id+"\n");
 			bw.write("name:"+name+"\n");
+			bw.write("x:"+x+"\n");
+			bw.write("y:"+y+"\n");
 			bw.write("level:"+level+"\n");
 			bw.write("health:"+health+"\n");
 			bw.write("mana:"+mana+"\n");
@@ -98,6 +103,12 @@ public class UserContent implements Serializable {
 					break;
 				case "name":
 					uc.name = lineArray[1];
+					break;
+				case "x":
+					uc.x = Integer.parseInt(lineArray[1]);
+					break;
+				case "y":
+					uc.y = Integer.parseInt(lineArray[1]);
 					break;
 				case "level":
 					uc.level = Integer.parseInt(lineArray[1]);

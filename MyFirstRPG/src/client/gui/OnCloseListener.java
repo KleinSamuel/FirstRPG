@@ -17,7 +17,6 @@ public class OnCloseListener extends WindowAdapter{
 	public void windowClosing(WindowEvent e) {
 		game.serverConnection.closeConnection();
 		game.saveGame();
-		game.udp_client.logoutPlayer(""+game.player.content.id);
 		DebugMessageFactory.printNormalMessage("EXITING.. GAME SAVED!");
 		System.exit(0);
 	}

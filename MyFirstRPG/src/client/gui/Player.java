@@ -29,6 +29,9 @@ public class Player extends Creature {
 		
 		loadContent();
 		
+		entityX = content.x;
+		entityY = content.y;
+		
 		int actualid = game.udp_client.registerPlayer("userdata["+id+","+entityX+","+entityY+","+1+","+1+","+1+"]");
 		content.id = actualid;
 		this.id = actualid;
@@ -41,6 +44,8 @@ public class Player extends Creature {
 	@Override
 	public void update() {
 		move(game, id, true);
+		content.x = entityX;
+		content.y = entityY;
 		game.getGameCamera().centerOnEntity(this);
 	}
 
