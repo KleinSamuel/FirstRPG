@@ -101,11 +101,8 @@ public class UDP_Server extends Thread {
 		
 		StringBuilder sb = new StringBuilder();
 		
-		System.out.println();
-		
 		for(UserData data : handler.userData) {
 			sb.append("["+data.getID()+","+data.getEntityX()+","+data.getEntityY()+","+data.getxMove()+","+data.getyMove()+","+data.getxPos()+"];");
-			System.out.println("["+data.getID()+","+data.getEntityX()+","+data.getEntityY()+","+data.getxMove()+","+data.getyMove()+","+data.getxPos()+"];");
 		}
 		
 		return sb.toString();

@@ -109,9 +109,13 @@ public class ServerThread extends Thread{
 			sendFile("/home/sam/RPG/hud/menu.png");
 			break;
 			
-		case "download_player_data":
-			sendString(packUserInfoAsString());
+		case "download_hud_exit":
+			sendFile("/home/sam/RPG/hud/exit.png");
 			break;
+			
+//		case "download_player_data":
+//			sendString(packUserInfoAsString());
+//			break;
 		}
 		
 	}

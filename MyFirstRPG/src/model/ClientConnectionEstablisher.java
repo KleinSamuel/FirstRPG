@@ -103,6 +103,13 @@ public class ClientConnectionEstablisher {
 		fileManager.hudMenuImage = FileEvent.byteArrayToBufferedImage(hudMenuEvent.getFileData());
 		DebugMessageFactory.printNormalMessage("\tDownloaded hud menu.");
 		
+		/* download hud exit button */
+		sendRequest("download_hud_exit");
+		
+		FileEvent hudExitEvent = downloadFileEvent();
+		fileManager.exitImage = FileEvent.byteArrayToBufferedImage(hudExitEvent.getFileData());
+		DebugMessageFactory.printNormalMessage("\tDownloaded hud exit.");
+		
 		
 		DebugMessageFactory.printNormalMessage("FINISHED DOWNLOADING FILES.");
 		
