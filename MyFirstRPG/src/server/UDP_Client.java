@@ -95,6 +95,11 @@ public class UDP_Client {
 		return new String(data, 0, data.length);
 	}
 	
+	public String downloadItemData() {
+		byte[] data = sendRequest("download_item_data");
+		return new String(data, 0, data.length);
+	}
+	
 	public void waitForMillis(long millis) {
 		try {
 			Thread.sleep(millis);

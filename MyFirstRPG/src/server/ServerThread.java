@@ -113,6 +113,20 @@ public class ServerThread extends Thread{
 			sendFile("/home/sam/RPG/hud/exit.png");
 			break;
 			
+		/* ITEMS */
+		case "download_potion_health_1":
+			sendFile("/home/sam/RPG/items/potion_red_1.png");
+			break;
+			
+		case "download_potion_mana_1":
+			sendFile("/home/sam/RPG/items/potion_blue_1.png");
+			break;
+		
+		/* WEAPONS */
+		case "download_arrows_1":
+			sendFile("/home/sam/RPG/items/arrows_1.png");
+			break;
+			
 //		case "download_player_data":
 //			sendString(packUserInfoAsString());
 //			break;

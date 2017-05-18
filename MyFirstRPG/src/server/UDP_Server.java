@@ -8,6 +8,7 @@ import java.net.SocketException;
 
 import client.UserData;
 import debug.DebugMessageFactory;
+import model.items.ItemData;
 
 public class UDP_Server extends Thread {
 
@@ -73,30 +74,44 @@ public class UDP_Server extends Thread {
 
 //		DebugMessageFactory.printInfoMessage("SERVER GOT REQUEST: "+request);
 		
+		/* register new logged in player to server */
 		if(request.contains("register_")) {
 			int id = handler.createNewID();
 			handler.registerClientToUDP(processUserdataInput(request.replace("register_", "")), id);
 			return new String(""+id).getBytes();
 		}
-		
+		/* update logged in players position */
 		if(request.contains("update_")) {
 			handler.updateClientToUDP(processUserdataInput(request.replace("update_", "")));
 			return new String("OK").getBytes();
 		}
-		
+		/* logout player from server */
 		if(request.contains("logout_")) {
 			handler.logoutClientToUDP(Integer.parseInt(request.replace("logout_", "")));
+			return new String("OK").getBytes();
+		}
+		
+		/* remove item from item list */
+		if(request.contains("remove_")) {
+			handler.removeItem(Integer.parseInt(request.replace("remove_", "")));
 			return new String("OK").getBytes();
 		}
 		
 		switch (request) {
 			case "download_player_data":
 				return sendString(packUserInfoAsString());
+			case "download_item_data":
+				return sendString(packItemDataAsString());
 		}
 		
 		return null;
 	}
 	
+	/**
+	 * Packs all user info into string for sending to clients.
+	 * 
+	 * @return
+	 */
 	private String packUserInfoAsString() {
 		
 		StringBuilder sb = new StringBuilder();
@@ -108,6 +123,27 @@ public class UDP_Server extends Thread {
 		return sb.toString();
 	}
 	
+	/**
+	 * Packs all item info into string for sending to clients.
+	 * 
+	 * @return
+	 */
+	private String packItemDataAsString() {
+		StringBuilder sb = new StringBuilder();
+		
+		for(ItemData data : handler.itemData) {
+			sb.append("["+data.getId()+","+data.getX()+","+data.getY()+","+data.getAmount()+"];");
+		}
+		
+		return sb.toString();
+	}
+	
+	/**
+	 * Parse input string to user data for updating user data.
+	 * 
+	 * @param input
+	 * @return
+	 */
 	private UserData processUserdataInput(String input) {
 		
 		input = input.replace("userdata", "");
@@ -124,6 +160,12 @@ public class UDP_Server extends Thread {
 		return new UserData(id, x, y, xMove, yMove, xPos);
 	}
 	
+	/**
+	 * Converts a string into byte array.
+	 * 
+	 * @param message
+	 * @return
+	 */
 	private byte[] sendString(String message) {
 		return message.getBytes();
 	}

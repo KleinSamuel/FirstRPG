@@ -70,46 +70,51 @@ public class ClientConnectionEstablisher {
 		
 		/* download map */
 		sendRequest("download_level_1");
-		
 		FileEvent mapEvent = downloadFileEvent();
 		fileManager.map = FileEvent.byteArrayToString(mapEvent.getFileData());
 		DebugMessageFactory.printNormalMessage("\tDownloaded map.");
 		
 		/* download tileset */
 		sendRequest("download_tileset");
-		
 		FileEvent tilesetEvent = downloadFileEvent();
 		fileManager.tileset = FileEvent.byteArrayToBufferedImage(tilesetEvent.getFileData());
 		DebugMessageFactory.printNormalMessage("\tDownloaded tileset.");
 		
 		/* download playerSheet */
 		sendRequest("download_playersheet");
-		
 		FileEvent playerEvent = downloadFileEvent();
 		fileManager.playerSheet = FileEvent.byteArrayToBufferedImage(playerEvent.getFileData());
 		DebugMessageFactory.printNormalMessage("\tDownloaded player spritesheet.");
 		
 		/* download tile marker */
 		sendRequest("download_tilemarker");
-		
 		FileEvent tilemarkerEvent = downloadFileEvent();
 		fileManager.tileMarkerImage = FileEvent.byteArrayToBufferedImage(tilemarkerEvent.getFileData());
 		DebugMessageFactory.printNormalMessage("\tDownloaded tilemarker.");
 		
 		/* download hud menu button */
 		sendRequest("download_hud_menu");
-		
 		FileEvent hudMenuEvent = downloadFileEvent();
 		fileManager.hudMenuImage = FileEvent.byteArrayToBufferedImage(hudMenuEvent.getFileData());
 		DebugMessageFactory.printNormalMessage("\tDownloaded hud menu.");
 		
 		/* download hud exit button */
 		sendRequest("download_hud_exit");
-		
 		FileEvent hudExitEvent = downloadFileEvent();
 		fileManager.exitImage = FileEvent.byteArrayToBufferedImage(hudExitEvent.getFileData());
 		DebugMessageFactory.printNormalMessage("\tDownloaded hud exit.");
 		
+		/* download potion health 1 */
+		sendRequest("download_potion_health_1");
+		FileEvent potionHealth_1_Event = downloadFileEvent();
+		fileManager.health_1_image = FileEvent.byteArrayToBufferedImage(potionHealth_1_Event.getFileData());
+		DebugMessageFactory.printNormalMessage("\tDownloaded potion health 1.");
+		
+		/* download potion mana 1 */
+		sendRequest("download_potion_mana_1");
+		FileEvent potionMana_1_Event = downloadFileEvent();
+		fileManager.mana_1_image = FileEvent.byteArrayToBufferedImage(potionMana_1_Event.getFileData());
+		DebugMessageFactory.printNormalMessage("\tDownloaded potion mana 1.");
 		
 		DebugMessageFactory.printNormalMessage("FINISHED DOWNLOADING FILES.");
 		

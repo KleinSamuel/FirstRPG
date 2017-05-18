@@ -8,6 +8,7 @@ import java.util.Random;
 
 import client.UserData;
 import debug.DebugMessageFactory;
+import model.items.ItemData;
 
 public class ServerThreadHandler extends Thread {
 
@@ -17,6 +18,9 @@ public class ServerThreadHandler extends Thread {
 	public ServerInformation info;
 	
 	public HashSet<UserData> userData;
+	
+	public HashSet<ItemData> itemData;
+	
 	private UDP_Server udp_server;
 	
 	public ServerThreadHandler(int tcp_port, int udp_port) {
@@ -24,7 +28,9 @@ public class ServerThreadHandler extends Thread {
 		DebugMessageFactory.printNormalMessage("STARTED SERVER HANDLER THREAD ON PORT ["+tcp_port+"]");
 		
 		info = new ServerInformation("SAM_SERVER", tcp_port);
+		
 		userData = new HashSet<>();
+		itemData = new HashSet<>();
 		
 		this.m_ServerSocket = null;
 		try {
@@ -102,6 +108,36 @@ public class ServerThreadHandler extends Thread {
 		userData.remove(toRemove);
 	}
 	
+	/**
+	 * Add given ItemData object to item list.
+	 * 
+	 * @param data
+	 */
+	public void addItem(ItemData data) {
+		itemData.add(data);
+	}
+	
+	/**
+	 * Removes ItemData with given id from item list. 
+	 * 
+	 * @param id
+	 */
+	public void removeItem(int id) {
+		ItemData toRemove = null;
+		for(ItemData data : itemData) {
+			if(data.getId() == id) {
+				toRemove = data;
+				break;
+			}
+		}
+		itemData.remove(toRemove);
+	}
+	
+	/**
+	 * Create unique id.
+	 * 
+	 * @return
+	 */
 	public int createNewID() {
 		Random rand = new Random();
 		int out;
