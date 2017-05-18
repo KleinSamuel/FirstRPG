@@ -19,10 +19,14 @@ public class ClickManager implements MouseListener{
 		
 		/* check if user clicked on MENU */
 		if(game.hud.clickOnMenu(new Point(e.getX(), e.getY()))) {
-			System.out.println("CLICKED ON MENU!");
+			HUD_Bag.DRAW_BAG = !HUD_Bag.DRAW_BAG;
 			return;
 		}
 
+		if(HUD_Bag.DRAW_BAG) {
+			return;
+		}
+		
 		/* if user clicked on tile; mark this tile and create path to let entity walk */
 		Point p = Utils.screenToGlobal(e.getX(), e.getY(), game.getGameCamera());
 		

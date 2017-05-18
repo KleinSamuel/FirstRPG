@@ -10,4 +10,6 @@ public class FileManager {
 	public BufferedImage tileMarkerImage;
 	public BufferedImage hudMenuImage;
 	
+	public BufferedImage exitImage;
+	
 }
