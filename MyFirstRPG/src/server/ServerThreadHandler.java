@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashSet;
+import java.util.Random;
 
 import client.UserData;
 import debug.DebugMessageFactory;
@@ -16,21 +17,29 @@ public class ServerThreadHandler extends Thread {
 	public ServerInformation info;
 	
 	public HashSet<UserData> userData;
+	private UDP_Server udp_server;
 	
-	public ServerThreadHandler(int port) {
+	public ServerThreadHandler(int tcp_port, int udp_port) {
 		
-		DebugMessageFactory.printNormalMessage("STARTED SERVER HANDLER THREAD ON PORT ["+port+"]");
+		DebugMessageFactory.printNormalMessage("STARTED SERVER HANDLER THREAD ON PORT ["+tcp_port+"]");
 		
-		info = new ServerInformation("SAM_SERVER", port);
+		info = new ServerInformation("SAM_SERVER", tcp_port);
 		userData = new HashSet<>();
 		
 		this.m_ServerSocket = null;
 		try {
-			this.m_ServerSocket = new ServerSocket(port);
+			this.m_ServerSocket = new ServerSocket(tcp_port);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		
+		createUDPServer(udp_port);
+		
 		start();
+	}
+	
+	public void createUDPServer(int udp_port) {
+		udp_server = new UDP_Server(this, udp_port);
 	}
 	
 	@SuppressWarnings("static-access")
@@ -64,9 +73,58 @@ public class ServerThreadHandler extends Thread {
 		this.m_clientConnections[index] = null;
 	}
 	
+	public void registerClientToUDP(UserData ud, int id) {
+		ud.setID(id);
+		userData.add(ud);
+	}
+	
+	public void updateClientToUDP(UserData data) {
+		for(UserData ud : userData) {
+			if(ud.getID() == data.getID()) {
+				ud.setEntityX(data.getEntityX());
+				ud.setEntityY(data.getEntityY());
+				ud.setxMove(data.getxMove());
+				ud.setyMove(data.getyMove());
+				ud.setxPos(data.getxPos());
+				break;
+			}
+		}
+	}
+	
+	public void logoutClientToUDP(int id) {
+		UserData toRemove = null;
+		for(UserData ud : userData) {
+			if(ud.getID() == id) {
+				toRemove = ud;
+				break;
+			}
+		}
+		userData.remove(toRemove);
+	}
+	
+	public int createNewID() {
+		Random rand = new Random();
+		int out;
+		
+		do {
+			out = rand.nextInt(100);
+		} while(userDataContainsID(out));
+		
+		return out;
+	}
+	
+	private boolean userDataContainsID(int id) {
+		for(UserData ud : userData) {
+			if(ud.getID() == id) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	public static void main(String[] args) {
 		
-		ServerThreadHandler mainServer = new ServerThreadHandler(6066);
+		ServerThreadHandler mainServer = new ServerThreadHandler(6066, 6067);
 		
 	}
 	
