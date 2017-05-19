@@ -87,7 +87,7 @@ public class Game implements Runnable {
 		
 		TileSet[] tileSet = new TileSet[1];
 		@SuppressWarnings({ "rawtypes", "unchecked" })
-		HashSet hs = new HashSet(Arrays.asList(0, 1, 2, 12, 14, 24, 25, 26));
+		HashSet hs = new HashSet(Arrays.asList(2, 3, 4, 5, 6, 7, 8, 9, 10, 12));
 		tileSet[0] = new TileSet(serverConnection.fileManager.tileset, 12 /*sizeX*/, 12/*sizeY*/, 3 /*border*/, hs);
 		
 		level = new Level(this, serverConnection.fileManager.map, tileSet, true);

@@ -90,11 +90,11 @@ public class ServerThread extends Thread{
 			break;
 		
 		case "download_level_1":
-			sendString(Utils.loadFileAsString("/home/sam/RPG/rpg.map"));
+			sendString(Utils.loadFileAsString("/home/sam/RPG/rpg_new.map"));
 			break;
 		
 		case "download_tileset":
-			sendFile("/home/sam/RPG/rpg.png");
+			sendFile("/home/sam/RPG/map_new.png");
 			break;
 		
 		case "download_playersheet":

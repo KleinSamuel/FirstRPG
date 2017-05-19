@@ -22,6 +22,8 @@ public class ServerThreadHandler extends Thread {
 	public HashSet<ItemData> itemData;
 	public HashSet<NPCData> npcData;
 	
+	public CreatureSpawnThread spawnThread;
+	
 	private UDP_Server udp_server;
 	
 	public ServerThreadHandler(int tcp_port, int udp_port) {
@@ -38,6 +40,8 @@ public class ServerThreadHandler extends Thread {
 		itemData.add(new ItemData(2, 2, 500, 500, 1));
 		itemData.add(new ItemData(3, 3, 600, 600, 1));
 		
+		spawnThread = new CreatureSpawnThread(this);
+		
 		this.m_ServerSocket = null;
 		try {
 			this.m_ServerSocket = new ServerSocket(tcp_port);
@@ -48,6 +52,7 @@ public class ServerThreadHandler extends Thread {
 		createUDPServer(udp_port);
 		
 		start();
+		new Thread(spawnThread).start();
 	}
 	
 	public void createUDPServer(int udp_port) {
@@ -151,6 +156,7 @@ public class ServerThreadHandler extends Thread {
 				break;
 			}
 		}
+		spawnThread.addCreatureToSpawn(toRemove);
 		itemData.remove(toRemove);
 	}
 	
