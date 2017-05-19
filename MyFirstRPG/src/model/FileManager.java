@@ -24,5 +24,10 @@ public class FileManager {
 	 */
 	public BufferedImage health_1_image;
 	public BufferedImage mana_1_image;
+	public BufferedImage arrows_1_image;
 	
+	/*
+	 * NPCs
+	 */
+	public BufferedImage eyeball_image;
 }

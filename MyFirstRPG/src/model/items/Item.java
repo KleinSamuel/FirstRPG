@@ -1,23 +1,25 @@
-package client.gui;
+package model.items;
 
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
-import model.items.ItemData;
-import model.items.ItemFactory;
+import client.gui.Entity;
+import client.gui.Game;
 
 public class Item extends Entity {
 	
+	private Game game;
 	private ItemData data;
 	
-	public Item(ItemData data, BufferedImage bimg) {
+	public Item(Game game, ItemData data, BufferedImage bimg) {
 		super(ItemFactory.items.get(data.getId()).toString(), bimg, data.getX(), data.getY(), ItemFactory.ITEM_WIDTH, ItemFactory.ITEM_HEIGHT);
 		this.data = data;
+		this.game = game;
 	}
 	
 	@Override
-	protected void render(Graphics g) {
-		g.drawImage(image, entityX, entityY, ItemFactory.ITEM_WIDTH, ItemFactory.ITEM_HEIGHT, null);
+	public void render(Graphics g) {
+		g.drawImage(image, entityX - game.getGameCamera().getxOffset(), entityY - game.getGameCamera().getyOffset(), ItemFactory.ITEM_WIDTH, ItemFactory.ITEM_HEIGHT, null);
 	}
 
 	@Override

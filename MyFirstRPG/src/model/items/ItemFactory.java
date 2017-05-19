@@ -17,6 +17,7 @@ public class ItemFactory {
 		
 		items.put(1, ItemEnum.POTION_HEALTH_1);
 		items.put(2, ItemEnum.POTION_MANA_1);
+		items.put(3, ItemEnum.ARROWS_1);
 	}
 	
 	public static HashSet<ItemData> getItemDataFromString(String input) {
@@ -45,6 +46,8 @@ public class ItemFactory {
 			return manager.health_1_image;
 		case 2:
 			return manager.mana_1_image;
+		case 3:
+			return manager.arrows_1_image;
 		}
 		
 		return null;
