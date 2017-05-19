@@ -132,7 +132,7 @@ public class UDP_Server extends Thread {
 		StringBuilder sb = new StringBuilder();
 		
 		for(ItemData data : handler.itemData) {
-			sb.append("["+data.getId()+","+data.getX()+","+data.getY()+","+data.getAmount()+"];");
+			sb.append("["+data.getId()+","+data.getItem_key()+","+data.getX()+","+data.getY()+","+data.getAmount()+"];");
 		}
 		
 		return sb.toString();

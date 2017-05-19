@@ -100,6 +100,11 @@ public class UDP_Client {
 		return new String(data, 0, data.length);
 	}
 	
+	public String removeItem(int i) {
+		byte[] data = sendRequest("remove_"+i);
+		return new String(data, 0, data.length);
+	}
+	
 	public void waitForMillis(long millis) {
 		try {
 			Thread.sleep(millis);

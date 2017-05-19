@@ -8,6 +8,7 @@ import java.util.Random;
 
 import client.UserData;
 import debug.DebugMessageFactory;
+import model.NPCs.NPCData;
 import model.items.ItemData;
 
 public class ServerThreadHandler extends Thread {
@@ -18,8 +19,8 @@ public class ServerThreadHandler extends Thread {
 	public ServerInformation info;
 	
 	public HashSet<UserData> userData;
-	
 	public HashSet<ItemData> itemData;
+	public HashSet<NPCData> npcData;
 	
 	private UDP_Server udp_server;
 	
@@ -31,6 +32,11 @@ public class ServerThreadHandler extends Thread {
 		
 		userData = new HashSet<>();
 		itemData = new HashSet<>();
+		npcData = new HashSet<>();
+		
+		itemData.add(new ItemData(1, 1, 400, 400, 1));
+		itemData.add(new ItemData(2, 2, 500, 500, 1));
+		itemData.add(new ItemData(3, 3, 600, 600, 1));
 		
 		this.m_ServerSocket = null;
 		try {
@@ -106,6 +112,21 @@ public class ServerThreadHandler extends Thread {
 			}
 		}
 		userData.remove(toRemove);
+	}
+	
+	public void addNPC(NPCData data) {
+		npcData.add(data);
+	}
+	
+	public void removeNPC(int id) {
+		NPCData toRemove = null;
+		for(NPCData data : npcData) {
+			if(data.getId() == id) {
+				toRemove = data;
+				break;
+			}
+		}
+		npcData.remove(toRemove);
 	}
 	
 	/**

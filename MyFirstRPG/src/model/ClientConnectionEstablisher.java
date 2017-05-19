@@ -116,6 +116,18 @@ public class ClientConnectionEstablisher {
 		fileManager.mana_1_image = FileEvent.byteArrayToBufferedImage(potionMana_1_Event.getFileData());
 		DebugMessageFactory.printNormalMessage("\tDownloaded potion mana 1.");
 		
+		/* download potion mana 1 */
+		sendRequest("download_arrows_1");
+		FileEvent arrows_1_Event = downloadFileEvent();
+		fileManager.arrows_1_image = FileEvent.byteArrayToBufferedImage(arrows_1_Event.getFileData());
+		DebugMessageFactory.printNormalMessage("\tDownloaded arrow 1.");
+		
+		/* download npc eyeball */
+		sendRequest("download_npc_eyeball");
+		FileEvent npc_eyeball_Event = downloadFileEvent();
+		fileManager.eyeball_image = FileEvent.byteArrayToBufferedImage(npc_eyeball_Event.getFileData());
+		DebugMessageFactory.printNormalMessage("\tDownloaded NPC eyeball.");
+		
 		DebugMessageFactory.printNormalMessage("FINISHED DOWNLOADING FILES.");
 		
 		checkCompleteness();
