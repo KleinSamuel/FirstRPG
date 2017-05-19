@@ -5,6 +5,7 @@ import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 
+import model.items.Item;
 import util.Utils;
 
 public abstract class Creature extends Entity {
@@ -85,7 +86,6 @@ public abstract class Creature extends Entity {
 				
 				if(directlyAfter) {
 					if(isPlayer) {
-//						g.serverConnection.sendRequest("userdata["+id+","+entityX+","+entityY+","+oldDirX+","+oldDirY+","+1+"]");
 						g.udp_client.sendRequest("update_userdata["+id+","+entityX+","+entityY+","+oldDirX+","+oldDirY+","+1+"]");
 					}
 					directlyAfter = false;
@@ -105,7 +105,6 @@ public abstract class Creature extends Entity {
 				setCurrentImage(xMove, yMove, xPos);
 				
 				if(isPlayer) {
-//					g.serverConnection.sendRequest("userdata["+id+","+entityX+","+entityY+","+xMove+","+yMove+","+xPos+"]");
 					g.udp_client.sendRequest("update_userdata["+id+","+entityX+","+entityY+","+xMove+","+yMove+","+xPos+"]");
 					oldDirX = xMove;
 					oldDirY = yMove;
