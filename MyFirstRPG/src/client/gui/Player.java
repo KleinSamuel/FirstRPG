@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 
 import client.UserContent;
+import model.items.Item;
 import util.FilePathFactory;
 
 public class Player extends Creature {
@@ -44,9 +45,25 @@ public class Player extends Creature {
 	@Override
 	public void update() {
 		move(game, id, true);
+		checkIfItemIsTouched();
 		content.x = entityX;
 		content.y = entityY;
 		game.getGameCamera().centerOnEntity(this);
+	}
+	
+	public void checkIfItemIsTouched() {
+		
+		Item toRemove = null;
+		
+		for(Item i : game.items) {
+			if(i.entityX/TileSet.TILEWIDTH == entityX/TileSet.TILEWIDTH && i.entityY/TileSet.TILEHEIGHT == entityY/TileSet.TILEHEIGHT) {
+				content.putInBag(i.getData().getItem_key());
+				game.udp_client.removeItem(i.getData().getId());
+			}
+		}
+		
+		game.items.remove(toRemove);
+		
 	}
 
 	@Override
