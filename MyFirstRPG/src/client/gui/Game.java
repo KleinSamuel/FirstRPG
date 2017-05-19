@@ -9,6 +9,7 @@ import java.util.HashSet;
 
 import debug.DebugMessageFactory;
 import model.ClientConnectionEstablisher;
+import model.items.Item;
 import model.items.ItemData;
 import model.items.ItemFactory;
 import server.UDP_Client;
@@ -29,7 +30,7 @@ public class Game implements Runnable {
 	UDP_Client udp_client;
 	
 	private HashSet<OtherPlayer> otherPlayers;
-	private HashSet<Item> items;
+	HashSet<Item> items;
 
 	Screen screen;
 	Level level;
@@ -121,11 +122,11 @@ public class Game implements Runnable {
 				continue;
 			}
 			
-			refreshOthers = System.currentTimeMillis();
-			if(refreshOthers - oldRefreshOthers > maxRefreshTime) {
+//			refreshOthers = System.currentTimeMillis();
+//			if(refreshOthers - oldRefreshOthers > maxRefreshTime) {
 //				updateOtherPlayers();
-				oldRefreshOthers = System.currentTimeMillis();
-			}
+//				oldRefreshOthers = System.currentTimeMillis();
+//			}
 			
 			render();
 
@@ -185,10 +186,14 @@ public class Game implements Runnable {
 		
 		items.clear();
 		
+		if(result.length() == 0) {
+			return;
+		}
+		
 		HashSet<ItemData> itemDataSet = ItemFactory.getItemDataFromString(result);
 		
 		for(ItemData data : itemDataSet) {
-			items.add(new Item(data, ItemFactory.getImageForItemId(serverConnection.fileManager, data.getId())));
+			items.add(new Item(this, data, ItemFactory.getImageForItemId(serverConnection.fileManager, data.getId())));
 		}
 		
 	}
@@ -225,6 +230,8 @@ public class Game implements Runnable {
 		tileMarker.render(graphics);
 
 		renderOtherPlayers();
+		
+		renderItems();
 
 		player.render(graphics);
 		
