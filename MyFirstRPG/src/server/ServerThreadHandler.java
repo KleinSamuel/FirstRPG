@@ -36,9 +36,12 @@ public class ServerThreadHandler extends Thread {
 		itemData = new HashSet<>();
 		npcData = new HashSet<>();
 		
-		itemData.add(new ItemData(1, 1, 400, 400, 1));
-		itemData.add(new ItemData(2, 2, 500, 500, 1));
-		itemData.add(new ItemData(3, 3, 600, 600, 1));
+//		itemData.add(new ItemData(1, 1, 400, 400, 1));
+//		itemData.add(new ItemData(2, 2, 500, 500, 1));
+//		itemData.add(new ItemData(3, 3, 600, 600, 1));
+		
+		npcData.add(new NPCData(1, 1, 400, 400, 10));
+		npcData.add(new NPCData(6, 1, 528, 400, 60));
 		
 		spawnThread = new CreatureSpawnThread(this);
 		

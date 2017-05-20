@@ -63,7 +63,6 @@ public class Player extends Creature {
 		}
 		
 		game.items.remove(toRemove);
-		
 	}
 
 	@Override

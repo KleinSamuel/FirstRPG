@@ -8,6 +8,7 @@ import java.net.SocketException;
 
 import client.UserData;
 import debug.DebugMessageFactory;
+import model.NPCs.NPCData;
 import model.items.ItemData;
 
 public class UDP_Server extends Thread {
@@ -97,11 +98,19 @@ public class UDP_Server extends Thread {
 			return new String("OK").getBytes();
 		}
 		
+		/* remove npc from item list */
+		if(request.contains("kill_")) {
+			handler.removeNPC(Integer.parseInt(request.replace("kill_", "")));
+			return new String("OK").getBytes();
+		}
+		
 		switch (request) {
 			case "download_player_data":
 				return sendString(packUserInfoAsString());
 			case "download_item_data":
 				return sendString(packItemDataAsString());
+			case "download_npc_data":
+				return sendString(packNpcDataAsString());
 		}
 		
 		return null;
@@ -133,6 +142,16 @@ public class UDP_Server extends Thread {
 		
 		for(ItemData data : handler.itemData) {
 			sb.append("["+data.getId()+","+data.getItem_key()+","+data.getX()+","+data.getY()+","+data.getAmount()+"];");
+		}
+		
+		return sb.toString();
+	}
+	
+	private String packNpcDataAsString() {
+		StringBuilder sb = new StringBuilder();
+		
+		for(NPCData data : handler.npcData) {
+			sb.append("["+data.getId()+","+data.getNpc_key()+","+data.getX()+","+data.getY()+","+data.getLevel()+"];");
 		}
 		
 		return sb.toString();

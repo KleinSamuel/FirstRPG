@@ -29,5 +29,6 @@ public class FileManager {
 	/*
 	 * NPCs
 	 */
-	public BufferedImage eyeball_image;
+	public BufferedImage eyeball_1_image;
+	public BufferedImage eyeball_2_image;
 }

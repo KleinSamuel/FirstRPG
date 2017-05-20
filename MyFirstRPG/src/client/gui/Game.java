@@ -9,6 +9,9 @@ import java.util.HashSet;
 
 import debug.DebugMessageFactory;
 import model.ClientConnectionEstablisher;
+import model.NPCs.NPC;
+import model.NPCs.NPCData;
+import model.NPCs.NPCFactory;
 import model.items.Item;
 import model.items.ItemData;
 import model.items.ItemFactory;
@@ -26,11 +29,13 @@ public class Game implements Runnable {
 
 	public boolean running = true;
 
-	ClientConnectionEstablisher serverConnection;
+	public ClientConnectionEstablisher serverConnection;
 	UDP_Client udp_client;
 	
 	private HashSet<OtherPlayer> otherPlayers;
 	HashSet<Item> items;
+	HashSet<NPC> npcs;
+	private boolean npcFirst;
 
 	Screen screen;
 	Level level;
@@ -107,6 +112,9 @@ public class Game implements Runnable {
 		otherPlayers = new HashSet<>();
 		/* init items */
 		items = new HashSet<>();
+		/* init NPCs */
+		npcs = new HashSet<>();
+		npcFirst = true;
 		
 		long oldRefreshOthers = System.currentTimeMillis();
 		long refreshOthers = System.currentTimeMillis();
@@ -122,11 +130,11 @@ public class Game implements Runnable {
 				continue;
 			}
 			
-//			refreshOthers = System.currentTimeMillis();
-//			if(refreshOthers - oldRefreshOthers > maxRefreshTime) {
-//				updateOtherPlayers();
-//				oldRefreshOthers = System.currentTimeMillis();
-//			}
+			refreshOthers = System.currentTimeMillis();
+			if(refreshOthers - oldRefreshOthers > NPCFactory.ANIMATION_TIMER) {
+				npcFirst = !npcFirst;
+				oldRefreshOthers = System.currentTimeMillis();
+			}
 			
 			render();
 
@@ -149,6 +157,7 @@ public class Game implements Runnable {
 		
 		updateOtherPlayers();
 		updateItems();
+		updateNPCs();
 		
 		player.update();
 		tileMarker.update();
@@ -198,6 +207,24 @@ public class Game implements Runnable {
 		
 	}
 	
+	public void updateNPCs() {
+		
+		String result = udp_client.downloadNpcData();
+		
+		npcs.clear();
+		
+		if(result.length() == 0) {
+			return;
+		}
+		
+		HashSet<NPCData> npcDataSet = NPCFactory.getNpcDataFromString(result);
+		
+		for(NPCData data : npcDataSet) {
+			npcs.add(new NPC(this, level, data, NPCFactory.getImageForNpcID(serverConnection.fileManager, data.getNpc_key(), npcFirst)));
+		}
+		
+	}
+	
 	public void renderOtherPlayers() {
 		for(OtherPlayer op : otherPlayers) {
 			op.setCurrentImage(op.xMove, op.yMove, op.xPos);
@@ -208,6 +235,12 @@ public class Game implements Runnable {
 	public void renderItems()  {
 		for(Item item : items) {
 			item.render(graphics);
+		}
+	}
+	
+	public void renderNPCs() {
+		for(NPC npc : npcs) {
+			npc.render(graphics);
 		}
 	}
 
@@ -232,6 +265,8 @@ public class Game implements Runnable {
 		renderOtherPlayers();
 		
 		renderItems();
+		
+		renderNPCs();
 
 		player.render(graphics);
 		

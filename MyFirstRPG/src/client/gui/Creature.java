@@ -36,6 +36,16 @@ public abstract class Creature extends Entity {
 		yMove = 0;
 		setPathToWalk(new Path());
 	}
+	
+	public Creature(String name, Level level, BufferedImage bimg, int x, int y, int width, int height, int health, int speed) {
+		super(name, bimg, x, y, width, height);
+		this.level = level;
+		this.health = health;
+		this.speed = speed;
+		xMove = 0;
+		yMove = 0;
+		setPathToWalk(new Path());
+	}
 
 	int op = 1;
 	int slow = 0;

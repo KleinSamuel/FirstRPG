@@ -123,9 +123,12 @@ public class ClientConnectionEstablisher {
 		DebugMessageFactory.printNormalMessage("\tDownloaded arrow 1.");
 		
 		/* download npc eyeball */
-		sendRequest("download_npc_eyeball");
-		FileEvent npc_eyeball_Event = downloadFileEvent();
-		fileManager.eyeball_image = FileEvent.byteArrayToBufferedImage(npc_eyeball_Event.getFileData());
+		sendRequest("download_npc_eyeball_1");
+		FileEvent npc_eyeball_1_Event = downloadFileEvent();
+		fileManager.eyeball_1_image = FileEvent.byteArrayToBufferedImage(npc_eyeball_1_Event.getFileData());
+		sendRequest("download_npc_eyeball_2");
+		FileEvent npc_eyeball_2_Event = downloadFileEvent();
+		fileManager.eyeball_2_image = FileEvent.byteArrayToBufferedImage(npc_eyeball_2_Event.getFileData());
 		DebugMessageFactory.printNormalMessage("\tDownloaded NPC eyeball.");
 		
 		DebugMessageFactory.printNormalMessage("FINISHED DOWNLOADING FILES.");

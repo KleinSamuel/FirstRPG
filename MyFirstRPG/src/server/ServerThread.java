@@ -13,6 +13,7 @@ import java.net.SocketTimeoutException;
 import client.UserData;
 import debug.DebugMessageFactory;
 import model.FileEvent;
+import util.FilePathFactory;
 import util.Utils;
 
 public class ServerThread extends Thread{
@@ -90,45 +91,48 @@ public class ServerThread extends Thread{
 			break;
 		
 		case "download_level_1":
-			sendString(Utils.loadFileAsString("/home/sam/RPG/rpg_new.map"));
+			sendString(Utils.loadFileAsString(FilePathFactory.BASE_DIR+"/rpg_new.map"));
 			break;
 		
 		case "download_tileset":
-			sendFile("/home/sam/RPG/map_new.png");
+			sendFile(FilePathFactory.BASE_DIR+"/map_new.png");
 			break;
 		
 		case "download_playersheet":
-			sendFile("/home/sam/RPG/player_v_3_small.png");
+			sendFile(FilePathFactory.BASE_DIR+"/player_v_3_small.png");
 			break;
 			
 		case "download_tilemarker":
-			sendFile("/home/sam/RPG/tilemarker.png");
+			sendFile(FilePathFactory.BASE_DIR+"/tilemarker.png");
 			break;
 			
 		case "download_hud_menu":
-			sendFile("/home/sam/RPG/hud/menu.png");
+			sendFile(FilePathFactory.BASE_DIR+"/hud/menu.png");
 			break;
 			
 		case "download_hud_exit":
-			sendFile("/home/sam/RPG/hud/exit.png");
+			sendFile(FilePathFactory.BASE_DIR+"/hud/exit.png");
 			break;
 			
 		/* ITEMS */
 		case "download_potion_health_1":
-			sendFile("/home/sam/RPG/items/potion_red_1.png");
+			sendFile(FilePathFactory.BASE_DIR+"/items/potion_red_1.png");
 			break;
 			
 		case "download_potion_mana_1":
-			sendFile("/home/sam/RPG/items/potion_blue_1.png");
+			sendFile(FilePathFactory.BASE_DIR+"/items/potion_blue_1.png");
 			break;
 			
 		case "download_arrows_1":
-			sendFile("/home/sam/RPG/items/arrows_1.png");
+			sendFile(FilePathFactory.BASE_DIR+"/items/arrows_1.png");
 			break;
 			
 		/* NPCs */
-		case "download_npc_eyeball":
-			sendFile("/home/sam/RPG/npcs/eyeball_1.png");
+		case "download_npc_eyeball_1":
+			sendFile(FilePathFactory.BASE_DIR+"/npc/eyeball_1.png");
+			break;
+		case "download_npc_eyeball_2":
+			sendFile(FilePathFactory.BASE_DIR+"/npc/eyeball_2.png");
 			break;
 			
 //		case "download_player_data":
@@ -182,15 +186,12 @@ public class ServerThread extends Thread{
 	}
 	
 	public void sendFileEvent(FileEvent fileEvent) {
-		
 		try {
 			outputStream.writeObject(fileEvent);
 			outputStream.flush();
-
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
 	}
 	
 	public void sendString(String s) {
@@ -230,6 +231,8 @@ public class ServerThread extends Thread{
 			fileEvent.setFileSize(len);
 			fileEvent.setFileData(byteArray);
 			fileEvent.setStatus("Success");
+			
+			diStream.close();
 			
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
