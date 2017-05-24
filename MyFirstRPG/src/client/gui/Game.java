@@ -2,7 +2,6 @@ package client.gui;
 
 import java.awt.Canvas;
 import java.awt.Graphics;
-import java.awt.Point;
 import java.awt.image.BufferStrategy;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -23,6 +22,11 @@ public class Game implements Runnable {
 
 	public static final int FPS = 60;
 	public static final long maxLoopTime = 1000 / FPS;
+	long lastLoopTime = System.nanoTime();
+	final long OPTIMAL_TIME = 1000000000 / FPS;
+	
+	public static int CURRENT_FPS;
+	
 	public static final long maxRefreshTime = 60;
 	public static final int SCREEN_WIDTH = 960;
 	public static final int SCREEN_HEIGHT = 540;
@@ -119,8 +123,24 @@ public class Game implements Runnable {
 		long oldRefreshOthers = System.currentTimeMillis();
 		long refreshOthers = System.currentTimeMillis();
 
+		int lastFpsTime = 0;
+		long now;
+		long updateLength;
+		
 		while (running) {
 
+			now = System.nanoTime();
+			updateLength = now - lastLoopTime;
+			lastLoopTime = now;
+			lastFpsTime+=updateLength;
+			CURRENT_FPS++;
+			
+			if(lastFpsTime >= 1000000000) {
+				hud.FPS = CURRENT_FPS;
+				lastFpsTime = 0;
+				CURRENT_FPS = 0;
+			}
+			
 			oldTimestamp = System.currentTimeMillis();
 			update();
 
@@ -137,7 +157,7 @@ public class Game implements Runnable {
 			}
 			
 			render();
-
+			
 			timestamp = System.currentTimeMillis();
 
 			if (timestamp - oldTimestamp <= maxLoopTime) {

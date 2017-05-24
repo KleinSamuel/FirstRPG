@@ -37,11 +37,9 @@ public class ServerThreadHandler extends Thread {
 		npcData = new HashSet<>();
 		
 //		itemData.add(new ItemData(1, 1, 400, 400, 1));
-//		itemData.add(new ItemData(2, 2, 500, 500, 1));
-//		itemData.add(new ItemData(3, 3, 600, 600, 1));
 		
-		npcData.add(new NPCData(1, 1, 400, 400, 10));
-		npcData.add(new NPCData(6, 1, 528, 400, 60));
+		npcData.add(new NPCData(1, 1, 400, 400, 10, 100, 100));
+		npcData.add(new NPCData(2, 1, 528, 400, 60, 100, 100));
 		
 		spawnThread = new CreatureSpawnThread(this);
 		
@@ -134,7 +132,18 @@ public class ServerThreadHandler extends Thread {
 				break;
 			}
 		}
+
+		spawnThread.addCreatureToSpawn(toRemove);
 		npcData.remove(toRemove);
+	}
+	
+	public void damageNPC(int id, int damage) {
+		for(NPCData npc : npcData) {
+			if(npc.getId() == id) {
+				npc.setCurrentHealth(npc.getCurrentHealth()-damage);
+				return;
+			}
+		}
 	}
 	
 	/**
@@ -159,7 +168,6 @@ public class ServerThreadHandler extends Thread {
 				break;
 			}
 		}
-		spawnThread.addCreatureToSpawn(toRemove);
 		itemData.remove(toRemove);
 	}
 	

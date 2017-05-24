@@ -104,6 +104,15 @@ public class UDP_Server extends Thread {
 			return new String("OK").getBytes();
 		}
 		
+		/* damage_npc_id_damage */
+		if(request.contains("damage_npc_")) {
+			String[] tmp = request.replace("damage_npc_", "").split("_");
+			int id = Integer.parseInt(tmp[0]);
+			int damage = Integer.parseInt(tmp[1]);
+			handler.damageNPC(id, damage);
+			return new String("OK").getBytes();
+		}
+		
 		switch (request) {
 			case "download_player_data":
 				return sendString(packUserInfoAsString());
@@ -151,7 +160,7 @@ public class UDP_Server extends Thread {
 		StringBuilder sb = new StringBuilder();
 		
 		for(NPCData data : handler.npcData) {
-			sb.append("["+data.getId()+","+data.getNpc_key()+","+data.getX()+","+data.getY()+","+data.getLevel()+"];");
+			sb.append("["+data.getId()+","+data.getNpc_key()+","+data.getX()+","+data.getY()+","+data.getLevel()+","+data.getHealth()+","+data.getCurrentHealth()+"];");
 		}
 		
 		return sb.toString();
