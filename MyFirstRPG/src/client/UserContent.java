@@ -26,10 +26,16 @@ public class UserContent implements Serializable {
 	public int y;
 	/* users level needed for calculation of several values */
 	public int level;
-	/* users health */
+	/* users current xp */
+	public int experience;
+	/* users max health */
 	public int health;
+	/* users current health */
+	public int current_health;
 	/* users mana */
 	public int mana;
+	/* users current mana */
+	public int current_mana;
 	/* users money */
 	public int money;
 	/* users max carry amount */
@@ -53,8 +59,11 @@ public class UserContent implements Serializable {
 			bw.write("x:"+x+"\n");
 			bw.write("y:"+y+"\n");
 			bw.write("level:"+level+"\n");
+			bw.write("exp:"+experience+"\n");
 			bw.write("health:"+health+"\n");
+			bw.write("currenthealth:"+current_health+"\n");
 			bw.write("mana:"+mana+"\n");
+			bw.write("currentmana:"+current_mana+"\n");
 			bw.write("money:"+money+"\n");
 			bw.write("bag_size:"+bag_size+"\n");
 			bw.write("bag_content:");
@@ -113,11 +122,20 @@ public class UserContent implements Serializable {
 				case "level":
 					uc.level = Integer.parseInt(lineArray[1]);
 					break;
+				case "exp":
+					uc.experience = Integer.parseInt(lineArray[1]);
+					break;
 				case "health":
 					uc.health = Integer.parseInt(lineArray[1]);
 					break;
+				case "currenthealth":
+					uc.current_health = Integer.parseInt(lineArray[1]);
+					break;
 				case "mana":
 					uc.mana = Integer.parseInt(lineArray[1]);
+					break;
+				case "currentmana":
+					uc.current_mana = Integer.parseInt(lineArray[1]);
 					break;
 				case "money":
 					uc.money = Integer.parseInt(lineArray[1]);
@@ -166,9 +184,15 @@ public class UserContent implements Serializable {
 	
 	public static UserContent createStandard() {
 		UserContent uc = new UserContent(-1);
+		uc.x = 400;
+		uc.y = 400;
 		uc.health = Player.DEFAULT_HEALTH;
+		uc.current_health = Player.DEFAULT_HEALTH;
 		uc.mana = Player.DEFAULT_MANA;
+		uc.current_mana = Player.DEFAULT_MANA;
+		uc.money = 100;
 		uc.level = Player.DEFAULT_LEVEL;
+		uc.experience = 0;
 		uc.name = "StandardName";
 		uc.bag_size = Player.DEFAUL_BAG_SIZE;
 		uc.bag = new HashMap<>();

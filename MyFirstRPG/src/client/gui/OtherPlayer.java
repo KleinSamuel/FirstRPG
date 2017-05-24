@@ -15,7 +15,7 @@ public class OtherPlayer extends Creature{
 	private int id;
 	
 	public OtherPlayer(Game game, String name, Level level, SpriteSheet spriteSheet, int x, int y) {
-		super(name, level, spriteSheet, x, y, OtherPlayer.DEFAULT_WIDTH, OtherPlayer.DEFAULT_HEIGHT, OtherPlayer.DEFAULT_HEALTH, OtherPlayer.DEFAULT_SPEED);
+		super(name, level, spriteSheet, x, y, OtherPlayer.DEFAULT_WIDTH, OtherPlayer.DEFAULT_HEIGHT, OtherPlayer.DEFAULT_HEALTH, OtherPlayer.DEFAULT_HEALTH, OtherPlayer.DEFAULT_SPEED);
 		setId(Integer.parseInt(name));
 		this.game = game;
 	}
@@ -23,8 +23,11 @@ public class OtherPlayer extends Creature{
 	@Override
 	protected void render(Graphics g) {
 		
-		g.drawImage(image, entityX - game.getGameCamera().getxOffset(), entityY - game.getGameCamera().getyOffset(), width, height, null);
-		drawName(g, game, "Player "+id, Color.WHITE, -1);
+		int draw_x = entityX - game.getGameCamera().getxOffset();
+		int draw_y = entityY - game.getGameCamera().getyOffset();
+		
+		g.drawImage(image, draw_x, draw_y, width, height, null);
+		drawName(game, "Player "+id, Color.WHITE, draw_x, draw_y);
 		
 	}
 

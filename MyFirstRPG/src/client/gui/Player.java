@@ -2,10 +2,15 @@ package client.gui;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Point;
 
 import client.UserContent;
+import model.NPCs.NPC;
+import model.NPCs.NPCFactory;
+import model.exp.ExperienceFactory;
 import model.items.Item;
 import util.FilePathFactory;
+import util.Utils;
 
 public class Player extends Creature {
 	
@@ -25,7 +30,7 @@ public class Player extends Creature {
 	UserContent content;
 
 	public Player(Game game, Level level, int x, int y, SpriteSheet playerSprite) {
-		super("Player", level, playerSprite, x, y, Entity.DEFAULT_WIDTH, Entity.DEFAULT_HEIGHT, Player.DEFAULT_HEALTH, Player.DEFAULT_SPEED);
+		super("Player", level, playerSprite, x, y, Entity.DEFAULT_WIDTH, Entity.DEFAULT_HEIGHT, Player.DEFAULT_HEALTH, Player.DEFAULT_HEALTH, Player.DEFAULT_SPEED);
 		this.game = game;
 		
 		loadContent();
@@ -49,6 +54,51 @@ public class Player extends Creature {
 		content.x = entityX;
 		content.y = entityY;
 		game.getGameCamera().centerOnEntity(this);
+		
+		if(follows != null) {
+			follows = NPCFactory.getNpcById(follows.id, game.npcs);
+		}
+		
+		if(isAttacking(System.currentTimeMillis())) {
+			turnPlayerToEnemy();
+			if(follows.currentHealth <= damage) {
+				game.udp_client.sendRequest("kill_"+follows.id);
+				checkIfLevelUp(ExperienceFactory.getGainedXpForLevel(((NPC)follows).data.getLevel()));
+				follows = null;
+				isFollowing = false;
+			}else {
+				game.udp_client.sendRequest("damage_npc_"+follows.id+"_"+damage);				
+			}
+		}
+	}
+	
+	private void turnPlayerToEnemy() {
+		
+		Point playerPoint = Utils.getArrayPosition(entityX, entityY);
+		Point enemyPoint = Utils.getArrayPosition(follows.entityX, follows.entityY);
+		
+		if(playerPoint.getX() > enemyPoint.getX()) {
+			setCurrentImage(-1, 0, 1);
+		}else if(playerPoint.getX() < enemyPoint.getX()) {
+			setCurrentImage(1, 0, 1);
+		}
+		if(playerPoint.getY() > enemyPoint.getY()) {
+			setCurrentImage(0, -1, 1);
+		}else if(playerPoint.getY() < enemyPoint.getY()) {
+			setCurrentImage(0, 1, 1);
+		}
+		
+	}
+	
+	private void checkIfLevelUp(int gainedExp) {
+		int needed = ExperienceFactory.getNeededXpForLevel(content.level) - content.experience;
+		
+		if(gainedExp >= needed) {
+			content.level++;
+			content.experience = gainedExp-needed;
+		}else {
+			content.experience += gainedExp;
+		}
 	}
 	
 	public void checkIfItemIsTouched() {
@@ -67,9 +117,18 @@ public class Player extends Creature {
 
 	@Override
 	public void render(Graphics g) {
-		g.drawImage(image, entityX - game.getGameCamera().getxOffset(), entityY - game.getGameCamera().getyOffset(), width, height, null);
+		
+		int draw_x = entityX - game.getGameCamera().getxOffset();
+		int draw_y = entityY - game.getGameCamera().getyOffset();
+		
+		g.drawImage(image, draw_x, draw_y, width, height, null);
+		
+		Healthbar.render(draw_x, draw_y - 7, Entity.DEFAULT_WIDTH, content.health, content.current_health, g);
+		
 		String name = "Player "+id;
-		drawName(g, game, name, Color.WHITE, content.level);
+		drawName(game, name, Color.BLACK, draw_x, draw_y - 10);
+		
+		drawLevel(game, content.level, Color.BLACK, draw_x, draw_y - 10 - 10);
 	}
 
 	public int getId() {

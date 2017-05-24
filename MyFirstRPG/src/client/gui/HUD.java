@@ -5,6 +5,7 @@ import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 
+import model.exp.ExperienceFactory;
 import util.Utils;
 
 public class HUD {
@@ -12,6 +13,8 @@ public class HUD {
 	public static final int MARGIN_LEFT = 30;
 	public static final int MARGIN_TOP = 30;
 	public static final int PADDING_TOP = 30;
+	
+	public int FPS;
 	
 	private Game game;
 	private Player player;
@@ -43,14 +46,24 @@ public class HUD {
 	
 	public void render(Graphics g) {
 		
+		/* health bar */
+		Healthbar.renderBIG(game.player.content.health, game.player.content.current_health, g);
+		
+		/* mana bar */
+		Manabar.renderBIG(game.player.content.mana, game.player.content.current_mana, g);
+		
+		/* exp bar */
+		Experiencebar.renderBIG(ExperienceFactory.getNeededXpForLevel(game.player.content.level), game.player.content.experience, g);
+		
 		g.setFont(Utils.HUD_FONT);
 		
-		setTransparentColor(g, 0, 153, 255, 250);
-		g.fillRoundRect(MARGIN_LEFT-10, MARGIN_TOP-10, 170, 65, 30, 30);
+//		setTransparentColor(g, 0, 153, 255, 250);
+//		g.fillRoundRect(MARGIN_LEFT-10, MARGIN_TOP-10, 170, 65, 30, 30);
+//		g.drawString("HEALTH: "+player.content.health, MARGIN_LEFT, MARGIN_TOP+15);
+//		g.drawString("MANA:    "+player.content.mana, MARGIN_LEFT, MARGIN_TOP+PADDING_TOP+15);
 		
 		g.setColor(Color.BLACK);
-		g.drawString("HEALTH: "+player.content.health, MARGIN_LEFT, MARGIN_TOP+15);
-		g.drawString("MANA:    "+player.content.mana, MARGIN_LEFT, MARGIN_TOP+PADDING_TOP+15);
+		g.drawString("FPS: "+FPS, 20, Game.SCREEN_HEIGHT-20);
 		
 		setTransparentColor(g, 0, 153, 255, 250);
 		g.fillRoundRect(MENU.getX()-10, MENU.getY()-10, MENU.getWidth()+20, MENU.getHeight()+20, 30, 30);
@@ -63,6 +76,8 @@ public class HUD {
 			g.fillRoundRect(MENU.getX()-10, MENU.getY()-10, MENU.getWidth()+20, MENU.getHeight()+20, 30, 30);
 			g.drawImage(exitImage, MENU.getX(), MENU.getY(), MENU.getWidth(), MENU.getHeight(), null);
 		}
+		
+		
 		
 	}
 	

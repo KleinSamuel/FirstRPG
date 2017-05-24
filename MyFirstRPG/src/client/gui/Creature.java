@@ -5,17 +5,18 @@ import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 
-import model.items.Item;
+import model.NPCs.NPC;
 import util.Utils;
 
 public abstract class Creature extends Entity {
 
 	public static final int DEFAULT_HEALTH = 10;
 	public static final int DEFAULT_SPEED = 3;
-	
 	public static final int DEFAULT_NAME_OFFSET = 3;
 
-	protected int health;
+	public int id;
+	public int health;
+	public int currentHealth;
 	protected int speed;
 	protected int xMove, yMove;
 	private Level level;
@@ -25,12 +26,18 @@ public abstract class Creature extends Entity {
 	BufferedImage image;
 	
 	private Path pathToWalk;
+	
+	public boolean isFollowing = false;
+	public Creature follows;
+	public long attack_speed = 1000;
+	public int damage = 10;
 
-	public Creature(String name, Level level, SpriteSheet spriteSheet, int x, int y, int width, int height, int health, int speed) {
+	public Creature(String name, Level level, SpriteSheet spriteSheet, int x, int y, int width, int height, int health, int currentHealth, int speed) {
 		super(name, spriteSheet.getSpriteElement(0, 1), x, y, width, height);
 		this.level = level;
 		this.spriteSheet = spriteSheet;
 		this.health = health;
+		this.currentHealth = currentHealth;
 		this.speed = speed;
 		xMove = 0;
 		yMove = 0;
@@ -39,8 +46,10 @@ public abstract class Creature extends Entity {
 	
 	public Creature(String name, Level level, BufferedImage bimg, int x, int y, int width, int height, int health, int speed) {
 		super(name, bimg, x, y, width, height);
+		this.id = Integer.parseInt(name);
 		this.level = level;
 		this.health = health;
+		this.currentHealth = health;
 		this.speed = speed;
 		xMove = 0;
 		yMove = 0;
@@ -57,16 +66,20 @@ public abstract class Creature extends Entity {
 	private int oldDirX;
 	private int oldDirY;
 	
-	public void drawName(Graphics g, Game game, String name, Color c, int level) {
+	public void drawName(Game game, String name, Color c, int x, int y) {
+		Graphics g = game.graphics;
+		g.setFont(Utils.playerNameFont);
+		g.setColor(c);
+
+		g.drawString(name, x, y);
+	}
+	
+	public void drawLevel(Game game, int level, Color c, int x, int y) {
+		Graphics g = game.graphics;
 		g.setFont(Utils.playerNameFont);
 		g.setColor(c);
 		
-		int offsetX = -1*(Utils.getWidthOfString(name, g)/2) + Player.DEFAULT_WIDTH/2;
-		
-		if(level > 0) {
-			g.drawString("Level "+level, entityX - game.getGameCamera().getxOffset() + offsetX, entityY - game.getGameCamera().getyOffset() - OtherPlayer.DEFAULT_NAME_OFFSET - 20);
-		}
-		g.drawString(name, entityX - game.getGameCamera().getxOffset() + offsetX, entityY - game.getGameCamera().getyOffset() - OtherPlayer.DEFAULT_NAME_OFFSET);
+		g.drawString("Level "+level, x, y);
 	}
 
 	public void move(Game g, int id, boolean isPlayer) {
@@ -162,8 +175,14 @@ public abstract class Creature extends Entity {
 		return new Point(xMove, yMove);
 	}
 	
+	public void follow(Creature creature, Camera cam) {
+		createSimplePathTo(new Point((creature.entityX/TileSet.TILEWIDTH)*TileSet.TILEWIDTH, (creature.entityY/TileSet.TILEHEIGHT)*TileSet.TILEHEIGHT));
+		pathToWalk.pathPoints.removeFirst();
+		pathToWalk.pathPoints.removeFirst();
+	}
+	
 	/**
-	 * Returns direction to next waypoint on path.
+	 * Returns direction to next way point on path.
 	 * 
 	 * @return
 	 */
@@ -237,6 +256,23 @@ public abstract class Creature extends Entity {
 			image = spriteSheet.getSpriteElement(1, prevDirection);
 		}
 		setEntityImage(image);
+	}
+	
+	private long oldTimestamp = System.currentTimeMillis();
+	public boolean isAttacking(long time) {
+		
+		if(!isFollowing) {
+			return false;
+		}
+		if(pathToWalk.pathPoints.size() > 1) {
+			return false;
+		}
+		
+		if(time-oldTimestamp > attack_speed) {
+			oldTimestamp = System.currentTimeMillis();
+			return true;
+		}
+		return false;
 	}
 
 	public Path getPathToWalk() {
