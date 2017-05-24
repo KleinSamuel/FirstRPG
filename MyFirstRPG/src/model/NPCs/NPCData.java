@@ -7,13 +7,17 @@ public class NPCData {
 	private int x;
 	private int y;
 	private int level;
+	private int health;
+	private int currentHealth;
 	
-	public NPCData(int id, int npc_key, int x, int y, int level) {
+	public NPCData(int id, int npc_key, int x, int y, int level, int health, int currentHealth) {
 		this.setId(id);
 		this.setNpc_key(npc_key);
 		this.setX(x);
 		this.setY(y);
 		this.setLevel(level);
+		this.setHealth(health);
+		this.setCurrentHealth(currentHealth);
 	}
 
 	public int getId() {
@@ -54,6 +58,22 @@ public class NPCData {
 
 	public void setLevel(int level) {
 		this.level = level;
+	}
+
+	public int getHealth() {
+		return health;
+	}
+
+	public void setHealth(int health) {
+		this.health = health;
+	}
+
+	public int getCurrentHealth() {
+		return currentHealth;
+	}
+
+	public void setCurrentHealth(int currentHealth) {
+		this.currentHealth = currentHealth;
 	}
 	
 }

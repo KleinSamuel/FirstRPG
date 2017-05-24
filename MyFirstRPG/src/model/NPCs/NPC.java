@@ -6,38 +6,47 @@ import java.awt.image.BufferedImage;
 
 import client.gui.Creature;
 import client.gui.Game;
+import client.gui.Healthbar;
 import client.gui.Level;
+import client.gui.TileSet;
 
 public class NPC extends Creature{
 	
 	private Game game;
 	private BufferedImage image;
-	private NPCData data;
-//	private long old_timestamp;
-//	private boolean first;
+	public NPCData data;
+	private int padding_left;
+	private int padding_top = 15;
 	
 	public NPC(Game game, Level level, NPCData data, BufferedImage bimg) {
-		super("NPC", level, bimg, data.getX(), data.getY(), NPCFactory.NPC_WIDTH, NPCFactory.NPC_HEIGHT, 100, 2);
+		super(""+data.getId(), level, bimg, data.getX(), data.getY(), NPCFactory.NPC_WIDTH, NPCFactory.NPC_HEIGHT, 100, 2);
 		this.game = game;
 		this.data = data;
 		this.image = bimg;
-//		old_timestamp = System.currentTimeMillis();
-//		first = true;
+		currentHealth = data.getCurrentHealth();
+		
+		padding_left = (TileSet.TILEWIDTH-NPCFactory.NPC_WIDTH)/2;
 	}
 	
 	@Override
 	public void update() {
-//		if(System.currentTimeMillis()-old_timestamp > NPCFactory.ANIMATION_TIMER) {
-//			old_timestamp = System.currentTimeMillis();
-//			image = NPCFactory.getImageForNpcID(game.serverConnection.fileManager, data.getNpc_key(), first);
-//			first = !first;
-//		}
+		
 	}
 	
 	@Override
 	public void render(Graphics g) {
-		g.drawImage(image, entityX - game.getGameCamera().getxOffset(), entityY - game.getGameCamera().getyOffset(), width, height, null);
+		
+		int draw_x = entityX - game.getGameCamera().getxOffset();
+		int draw_y = entityY - game.getGameCamera().getyOffset();
+		
+		g.drawImage(image, draw_x - padding_left, draw_y - padding_left, width, height, null);
+
+		Healthbar.render(draw_x - padding_left, draw_y - padding_left - padding_top, NPCFactory.NPC_WIDTH, data.getHealth(), data.getCurrentHealth(), g);
+		
 		String name = NPCFactory.npcs.get(data.getNpc_key()).toString();
-		drawName(g, game, name, Color.WHITE, data.getLevel());
+		drawName(game, name, Color.BLACK, draw_x - padding_left, draw_y - padding_left - padding_top - 3);
+		
+		drawLevel(game, data.getLevel(), Color.BLACK, draw_x - padding_left, draw_y - padding_left - padding_top - padding_top);
+		
 	}
 }

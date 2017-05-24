@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 import model.FileManager;
-import model.items.ItemData;
 
 public class NPCFactory {
 
@@ -47,12 +46,23 @@ public class NPCFactory {
 			int x = Integer.parseInt(data[2]);
 			int y = Integer.parseInt(data[3]);
 			int level = Integer.parseInt(data[4]);
+			int heath = Integer.parseInt(data[5]);
+			int currentHealth = Integer.parseInt(data[6]);
 			
-			NPCData npcData = new NPCData(id, npc_key, x, y, level);
+			NPCData npcData = new NPCData(id, npc_key, x, y, level, heath, currentHealth);
 			set.add(npcData);
 		}
 		
 		return set;
+	}
+	
+	public static NPC getNpcById(int id, HashSet<NPC> set) {
+		for(NPC npc : set) {
+			if(npc.id == id) {
+				return npc;
+			}
+		}
+		return null;
 	}
 	
 }
