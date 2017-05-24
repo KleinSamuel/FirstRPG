@@ -48,7 +48,7 @@ public class Utils {
 		return (int) bounds.getWidth();
 	}
 
-	private static final Font SERIF_FONT = new Font("arial", Font.BOLD, 18);
+	private static final Font SERIF_FONT = new Font("arial", Font.BOLD, 12);
 	public static final Font HUD_FONT = new Font("arial", Font.BOLD, 20);
 
 	public static Font getHudFont(int size) {
@@ -200,6 +200,14 @@ public class Utils {
 		int globalY = (y + cam.getyOffset()) / TileSet.TILEHEIGHT;
 
 		return new Point(globalX, globalY);
+	}
+	
+	public static Point adjustCoordinates(int x, int y) {
+		return new Point((x/TileSet.TILEWIDTH)*TileSet.TILEWIDTH, (y/TileSet.TILEHEIGHT)*TileSet.TILEHEIGHT);
+	}
+	
+	public static Point getArrayPosition(int x, int y) {
+		return new Point(x/TileSet.TILEWIDTH, y/TileSet.TILEHEIGHT);
 	}
 
 	/**

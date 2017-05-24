@@ -8,7 +8,7 @@ public class FilePathFactory {
 	public static final String BASE_DIR;
 	
 	static {
-		File f = new File("MyFirstRPG/resources/");
+		File f = new File("resources/");
 		BASE_DIR = f.getAbsolutePath();
 	}
 	

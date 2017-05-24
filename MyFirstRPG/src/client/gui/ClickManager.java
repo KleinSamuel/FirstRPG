@@ -4,6 +4,7 @@ import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
+import model.NPCs.NPC;
 import util.Utils;
 
 public class ClickManager implements MouseListener{
@@ -22,10 +23,19 @@ public class ClickManager implements MouseListener{
 			HUD_Bag.DRAW_BAG = !HUD_Bag.DRAW_BAG;
 			return;
 		}
-
 		if(HUD_Bag.DRAW_BAG) {
 			return;
 		}
+		
+		NPC enemy = clickOnEnemy(Utils.screenToGlobal(e.getX(), e.getY(), game.getGameCamera()));
+		if(enemy != null) {
+			game.player.follow(enemy, game.getGameCamera());
+			game.player.isFollowing = true;
+			game.player.follows = enemy;
+			return;
+		}
+		
+		game.player.isFollowing = false;
 		
 		/* if user clicked on tile; mark this tile and create path to let entity walk */
 		Point p = Utils.screenToGlobal(e.getX(), e.getY(), game.getGameCamera());
@@ -40,6 +50,17 @@ public class ClickManager implements MouseListener{
 		
 		game.tileMarker.setNewPosition(globalX, globalY);
 		game.player.createSimplePathTo(new Point(globalX, globalY));
+	}
+	
+	private NPC clickOnEnemy(Point p) {
+		NPC enemy = null;
+		for(NPC npc : game.npcs) {
+			if(npc.entityX/TileSet.TILEWIDTH == p.getX() && npc.entityY/TileSet.TILEHEIGHT == p.getY()) {
+				enemy = npc;
+				break;
+			}
+		}
+		return enemy;
 	}
 
 	@Override

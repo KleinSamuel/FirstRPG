@@ -1,7 +1,10 @@
 package client.gui;
 
 import java.awt.Graphics;
+import java.awt.Point;
 import java.awt.image.BufferedImage;
+
+import util.Utils;
 
 /**
  * Entity class used for marking a clicked tile.
@@ -31,6 +34,10 @@ public class TileMarker extends Entity{
 	@Override
 	protected void update() {
 		setEntityImage(image);
+		if(game.player.isFollowing) {
+			Point markerPoint = Utils.adjustCoordinates(game.player.follows.entityX, game.player.follows.entityY);
+			setNewPosition(markerPoint.x, markerPoint.y);
+		}
 	}
 
 	public void setVisible(boolean b) {

@@ -1,10 +1,13 @@
-id:91
+id:58
 name:StandardName
-x:320
+x:384
 y:448
 level:3
+exp:1107
 health:123
+currenthealth:90
 mana:200
+currentmana:200
 money:0
 bag_size:10
 bag_content:1-16,2-6,3-5,
