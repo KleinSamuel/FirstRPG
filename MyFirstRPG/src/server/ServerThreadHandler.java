@@ -19,7 +19,7 @@ import util.Utils;
 public class ServerThreadHandler extends Thread {
 
 	private ServerSocket m_ServerSocket;
-	final public static int MAX_CLIENTS = 10;
+	final public static int MAX_CLIENTS = 50;
 	final public ServerThread[] m_clientConnections = new ServerThread[MAX_CLIENTS];
 	public ServerInformation info;
 	
@@ -36,11 +36,15 @@ public class ServerThreadHandler extends Thread {
 	@SuppressWarnings("unused")
 	private UDP_Server udp_server;
 	
+	public UserFactory userFactory;
+	
 	public ServerThreadHandler(int tcp_port, int udp_port) {
 		
 		DebugMessageFactory.printNormalMessage("STARTED SERVER HANDLER THREAD ON PORT ["+tcp_port+"]");
 		
 		info = new ServerInformation("SAM_SERVER", tcp_port);
+		
+		userFactory = new UserFactory(this);
 		
 		initMap();
 		
@@ -51,8 +55,10 @@ public class ServerThreadHandler extends Thread {
 		npcs = new HashSet<>();
 		
 		NPCData d1 = new NPCData(1, 1, 400, 400, 3, 100, 100);
+		NPCData d2 = new NPCData(2, 2, 640, 640, 12, 100, 100);
 		
-		addNPC(d1);
+//		addNPC(d1);
+//		addNPC(d2);
 		
 		spawnThread = new CreatureSpawnThread(this);
 		
@@ -124,9 +130,17 @@ public class ServerThreadHandler extends Thread {
 		this.m_clientConnections[index] = null;
 	}
 	
-	public void registerClientToUDP(UserData ud, int id) {
+	/**
+	 * Handle recently logged in player. Check if ID is existing, if yes return if not return generated id.
+	 * 
+	 * @param ud
+	 * @return
+	 */
+	public int registerClientToUDP(UserData ud) {
+		int id = userFactory.handleUser(ud.getID());
 		ud.setID(id);
 		userData.add(ud);
+		return id;
 	}
 	
 	public void updateClientToUDP(UserData data) {
@@ -217,35 +231,8 @@ public class ServerThreadHandler extends Thread {
 		itemData.remove(toRemove);
 	}
 	
-	/**
-	 * Create unique id.
-	 * 
-	 * @return
-	 */
-	public int createNewID() {
-		Random rand = new Random();
-		int out;
-		
-		do {
-			out = rand.nextInt(100);
-		} while(userDataContainsID(out));
-		
-		return out;
-	}
-	
-	private boolean userDataContainsID(int id) {
-		for(UserData ud : userData) {
-			if(ud.getID() == id) {
-				return true;
-			}
-		}
-		return false;
-	}
-	
 	public static void main(String[] args) {
-		
 		ServerThreadHandler mainServer = new ServerThreadHandler(6066, 6067);
-		
 	}
 	
 }

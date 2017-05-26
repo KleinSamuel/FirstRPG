@@ -325,5 +325,61 @@ public class Utils {
 		}
 		return false;
 	}
+	
+	/**
+	 * Pack a hash set of integer into a string with given delimiter
+	 * 
+	 * Used: to send walkable tiles data
+	 */
+	public static String packHashSetAsString(HashSet<Integer> set, String delimiter) {
+		StringBuilder sb = new StringBuilder();
+		for(Integer i : set) {
+			sb.append(i+delimiter);
+		}
+		return sb.toString();
+	}
+	
+	/**
+	 * Resolved a packed hash set of integer from a string
+	 * 
+	 * Used: to extract walkable tiles data
+	 */
+	public static HashSet<Integer> resolveStringAsHashSet(String s, String delimiter){
+		HashSet<Integer> set = new HashSet<>();
+		String[] arr = s.split(delimiter);
+		for (int i = 0; i < arr.length; i++) {
+			set.add(Integer.parseInt(arr[i]));
+		}
+		return set;
+	}
+	
+	/**
+	 * Check if given position in array coordinates is walkable
+	 * 
+	 * @param xCoord in array
+	 * @param yCoord in array
+	 * @param walkableTiles hash set of walkable tiles
+	 * @param map int[][]
+	 * @return boolean if given tile is walkable
+	 */
+	public static boolean checkIfTileIsWalkableCoordinates(int xCoord, int yCoord, HashSet<Integer> walkableTiles, int[][] map) {
+		System.out.println("POS: "+xCoord+"-"+yCoord);
+		return walkableTiles.contains(map[xCoord][yCoord]);
+	}
+
+	/**
+	 * Check if given position in pixel coordinates is walkable
+	 * 
+	 * @param x in pixel
+	 * @param y in pixel
+	 * @param walkableTiles hash set of walkable tiles
+	 * @param map int[][]
+	 * @return boolean if given tile is walkable
+	 */
+	public static boolean checkIfTileIsWalkablePixel(int x, int y, HashSet<Integer> walkableTiles, int[][] map) {
+		System.out.println("PIX: "+x+"-"+y);
+		Point adjPosition = getArrayPosition(x, y);
+		return checkIfTileIsWalkableCoordinates(adjPosition.x, adjPosition.y, walkableTiles, map);
+	}
 
 }

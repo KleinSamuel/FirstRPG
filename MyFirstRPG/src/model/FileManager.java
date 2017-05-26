@@ -1,6 +1,7 @@
 package model;
 
 import java.awt.image.BufferedImage;
+import java.util.HashSet;
 
 public class FileManager {
 
@@ -8,6 +9,7 @@ public class FileManager {
 	 * map
 	 */
 	public String map;
+	public static HashSet<Integer> walkableTiles;
 	public BufferedImage tileset;
 	public BufferedImage playerSheet;
 	public BufferedImage tileMarkerImage;
@@ -31,4 +33,6 @@ public class FileManager {
 	 */
 	public BufferedImage eyeball_1_image;
 	public BufferedImage eyeball_2_image;
+	public BufferedImage grey_mouse_1_image;
+	public BufferedImage grey_mouse_2_image;
 }

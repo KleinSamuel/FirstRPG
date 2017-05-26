@@ -77,8 +77,8 @@ public class UDP_Server extends Thread {
 		
 		/* register new logged in player to server */
 		if(request.contains("register_")) {
-			int id = handler.createNewID();
-			handler.registerClientToUDP(processUserdataInput(request.replace("register_", "")), id);
+			int id = handler.registerClientToUDP(processUserdataInput(request.replace("register_", "")));
+			System.out.println("ID: "+id);
 			return new String(""+id).getBytes();
 		}
 		/* update logged in players position */

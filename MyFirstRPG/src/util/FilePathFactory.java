@@ -4,7 +4,6 @@ import java.io.File;
 
 public class FilePathFactory {
 
-//	public static final String BASE_DIR = "/home/sam/RPG/";
 	public static final String BASE_DIR;
 	
 	static {

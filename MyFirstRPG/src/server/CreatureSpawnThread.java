@@ -73,6 +73,8 @@ public class CreatureSpawnThread implements Runnable{
 			
 			timestamp = System.currentTimeMillis();
 
+			handler.userFactory.writeUserListFile(timestamp);
+
 			if (timestamp - old_timestamp <= refreshRate) {
 				try {
 					Thread.sleep(refreshRate - (timestamp - old_timestamp));

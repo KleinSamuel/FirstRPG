@@ -5,6 +5,7 @@ import java.awt.Graphics;
 import java.awt.Point;
 
 import client.UserContent;
+import debug.DebugMessageFactory;
 import model.NPCs.NPC;
 import model.NPCs.NPCFactory;
 import model.exp.ExperienceFactory;
@@ -35,12 +36,19 @@ public class Player extends Creature {
 		
 		loadContent();
 		
+		if(content.id == -1) {
+			DebugMessageFactory.printNormalMessage("FIRST STARTUP!");
+		}else {
+			DebugMessageFactory.printNormalMessage("NOT FIRST STARTUP!");
+		}
+		
 		entityX = content.x;
 		entityY = content.y;
 		
 		int actualid = game.udp_client.registerPlayer("userdata["+id+","+entityX+","+entityY+","+1+","+1+","+1+","+content.health+","+content.current_health+"]");
 		content.id = actualid;
 		this.id = actualid;
+		System.out.println(actualid);
 	}
 	
 	private void loadContent() {

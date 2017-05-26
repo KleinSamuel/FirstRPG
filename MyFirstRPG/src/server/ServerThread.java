@@ -92,10 +92,15 @@ public class ServerThread extends Thread{
 		
 		case "download_level_1":
 			sendString(Utils.loadFileAsString(FilePathFactory.BASE_DIR+"/rpg_new.map"));
+//			sendString(Utils.loadFileAsString(FilePathFactory.BASE_DIR+"/map_test.map"));
 			break;
 		
 		case "download_tileset":
 			sendFile(FilePathFactory.BASE_DIR+"/map_new.png");
+			break;
+			
+		case "download_walkable_tiles":
+			sendString(Utils.packHashSetAsString(handler.tilesAllowed, ","));
 			break;
 		
 		case "download_playersheet":
@@ -134,21 +139,15 @@ public class ServerThread extends Thread{
 		case "download_npc_eyeball_2":
 			sendFile(FilePathFactory.BASE_DIR+"/npc/eyeball_2.png");
 			break;
+			
+		case "download_npc_grey_mouse_1":
+			sendFile(FilePathFactory.BASE_DIR+"/npc/grey_mouse_1.png");
+			break;
+		case "download_npc_grey_mouse_2":
+			sendFile(FilePathFactory.BASE_DIR+"/npc/grey_mouse_2.png");
+			break;
 		}
 		
-	}
-	
-	private String packUserInfoAsString() {
-		
-		StringBuilder sb = new StringBuilder();
-		for (int i = 0; i < handler.m_clientConnections.length; i++) {
-			if(handler.m_clientConnections[i] != null) {
-				UserData data = handler.m_clientConnections[i].userData;
-				sb.append("["+i+","+data.getEntityX()+","+data.getEntityY()+","+data.getxMove()+","+data.getyMove()+","+data.getxPos()+"];");
-			}
-		}
-		
-		return sb.toString();
 	}
 	
 	private void processUserdataInput(String input) {
