@@ -29,13 +29,13 @@ public class ClickManager implements MouseListener{
 		
 		NPC enemy = clickOnEnemy(Utils.screenToGlobal(e.getX(), e.getY(), game.getGameCamera()));
 		if(enemy != null) {
-			game.player.follow(enemy, game.getGameCamera());
 			game.player.isFollowing = true;
 			game.player.follows = enemy;
 			return;
 		}
 		
 		game.player.isFollowing = false;
+		game.player.follows = null;
 		
 		/* if user clicked on tile; mark this tile and create path to let entity walk */
 		Point p = Utils.screenToGlobal(e.getX(), e.getY(), game.getGameCamera());
