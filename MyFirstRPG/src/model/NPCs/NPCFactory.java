@@ -19,6 +19,7 @@ public class NPCFactory {
 	static {
 		npcs = new HashMap<>();
 		npcs.put(1, NPCEnum.EYEBALL);
+		npcs.put(2, NPCEnum.MOUSE);
 	}
 	
 	
@@ -30,6 +31,12 @@ public class NPCFactory {
 				return manager.eyeball_1_image;
 			}else {
 				return manager.eyeball_2_image;
+			}
+		case 2:
+			if(first) {
+				return manager.grey_mouse_1_image;
+			}else {
+				return manager.grey_mouse_2_image;
 			}
 		}
 		

@@ -9,6 +9,7 @@ public class Level {
 	private TileSet[] tileset;
 	private int sizeX, sizeY;
 	private int[][][] tileMap;
+	public static int[][] tileMap2D;
 	private Game game;
 	
 	public Level(Game game, String path, TileSet[] tileset, boolean alreadyFileAsString) {
@@ -28,12 +29,15 @@ public class Level {
 		sizeY = Utils.parseInt(tokens[1]);
 		
 		tileMap = new int[1][sizeX][sizeY];
+		tileMap2D = new int[sizeX][sizeY];
 		
 		int i = 2;
 		
 		for (int y = 0; y < sizeY; y++) {
 			for (int x = 0; x < sizeX; x++) {
-				tileMap[0][x][y] = Utils.parseInt(tokens[i++]);
+				tileMap[0][x][y] = Utils.parseInt(tokens[i]);
+				tileMap2D[x][y] = Utils.parseInt(tokens[i]);
+				i++;
 			}
 		}
 	}
