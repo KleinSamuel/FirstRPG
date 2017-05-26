@@ -1,11 +1,11 @@
-id:58
+id:7
 name:StandardName
-x:384
-y:448
+x:448
+y:512
 level:3
-exp:1107
-health:123
-currenthealth:90
+exp:32
+health:12500
+currenthealth:12380
 mana:200
 currentmana:200
 money:0
