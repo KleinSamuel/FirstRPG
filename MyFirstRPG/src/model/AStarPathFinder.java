@@ -20,8 +20,6 @@ public class AStarPathFinder {
 	}
 	
 	public LinkedList<Point> findPath(int startX, int startY, int targetX, int targetY){
-		
-		DebugMessageFactory.printInfoMessage("FIND PATH FROM "+startX+"-"+startY+" to "+targetX+"-"+targetY);
 
 		/* create open and closed lists */
 		open = new LinkedList<>();
@@ -36,14 +34,7 @@ public class AStarPathFinder {
 			
 			/* check if target is reached */
 			if(current.x == targetX && current.y == targetY) {
-				System.out.println("FOUND PATH");
 				return backTrack();
-				
-//				for(PathFindingPoint p : closed) {
-//					System.out.println(p.x+"-"+p.y+" : "+p.fScore+" -> "+p.parent);
-//				}
-//				
-//				return null;
 			}
 			
 			/* get adjacent points for current point */
@@ -62,7 +53,6 @@ public class AStarPathFinder {
 			
 			/* check if open list is empty -> not path exists */
 			if(open.isEmpty()) {
-				System.out.println("THERE IS NO PATH!");
 				return null;
 			}
 			
