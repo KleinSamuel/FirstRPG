@@ -25,12 +25,14 @@ public abstract class Creature extends Entity {
 	int prevDirection;
 	BufferedImage image;
 	
-	private Path pathToWalk;
+	public Path pathToWalk;
 	
 	public boolean isFollowing = false;
 	public Creature follows;
 	public long attack_speed = 1000;
 	public int damage = 10;
+	
+	public int attacker_id;
 
 	public Creature(String name, Level level, SpriteSheet spriteSheet, int x, int y, int width, int height, int health, int currentHealth, int speed) {
 		super(name, spriteSheet.getSpriteElement(0, 1), x, y, width, height);
@@ -42,6 +44,7 @@ public abstract class Creature extends Entity {
 		xMove = 0;
 		yMove = 0;
 		setPathToWalk(new Path());
+		attacker_id = -1;
 	}
 	
 	public Creature(String name, Level level, BufferedImage bimg, int x, int y, int width, int height, int health, int speed) {
@@ -54,6 +57,18 @@ public abstract class Creature extends Entity {
 		xMove = 0;
 		yMove = 0;
 		setPathToWalk(new Path());
+		attacker_id = -1;
+	}
+	
+	/**
+	 * Dummy constructor for server
+	 */
+	public Creature(int x, int y, int width, int height) {
+		super("", null, x, y, width, height);
+		xMove = 0;
+		yMove = 0;
+		setPathToWalk(new Path());
+		attacker_id = -1;
 	}
 
 	int op = 1;
@@ -89,7 +104,7 @@ public abstract class Creature extends Entity {
 		entityY += yMove * speed;
 		
 		/* if player reached target */
-		if(pathToWalk.pathPoints.size() == 0 && xMove == 0 && yMove == 0) {
+		if(isPlayer && pathToWalk.pathPoints.size() == 0 && xMove == 0 && yMove == 0) {
 			g.tileMarker.setVisible(false);
 		}
 
@@ -109,7 +124,7 @@ public abstract class Creature extends Entity {
 				
 				if(directlyAfter) {
 					if(isPlayer) {
-						g.udp_client.sendRequest("update_userdata["+id+","+entityX+","+entityY+","+oldDirX+","+oldDirY+","+1+"]");
+						g.udp_client.sendRequest("update_userdata["+id+","+entityX+","+entityY+","+oldDirX+","+oldDirY+","+1+","+health+","+currentHealth+"]");
 					}
 					directlyAfter = false;
 				}
@@ -128,7 +143,7 @@ public abstract class Creature extends Entity {
 				setCurrentImage(xMove, yMove, xPos);
 				
 				if(isPlayer) {
-					g.udp_client.sendRequest("update_userdata["+id+","+entityX+","+entityY+","+xMove+","+yMove+","+xPos+"]");
+					g.udp_client.sendRequest("update_userdata["+id+","+entityX+","+entityY+","+xMove+","+yMove+","+xPos+","+health+","+currentHealth+"]");
 					oldDirX = xMove;
 					oldDirY = yMove;
 				}
@@ -160,10 +175,13 @@ public abstract class Creature extends Entity {
 		int xMove = 0;
 		int yMove = 0;
 		
-		if(entityX < pointOnMap.getX()) {
-			xMove = 1;
-		}else if(entityX > pointOnMap.getX()) {
-			xMove = -1;
+		if(entityX != pointOnMap.getX()) {
+			if(entityX < pointOnMap.getX()) {
+				xMove = 1;
+			}else if(entityX > pointOnMap.getX()) {
+				xMove = -1;
+			}
+			return new Point(xMove, yMove);
 		}
 		
 		if(entityY < pointOnMap.getY()) {
@@ -175,9 +193,12 @@ public abstract class Creature extends Entity {
 		return new Point(xMove, yMove);
 	}
 	
-	public void follow(Creature creature, Camera cam) {
-		createSimplePathTo(new Point((creature.entityX/TileSet.TILEWIDTH)*TileSet.TILEWIDTH, (creature.entityY/TileSet.TILEHEIGHT)*TileSet.TILEHEIGHT));
-		pathToWalk.pathPoints.removeFirst();
+	public void follow(Creature creature) {
+		follow(new Point((creature.entityX/TileSet.TILEWIDTH)*TileSet.TILEWIDTH, (creature.entityY/TileSet.TILEHEIGHT)*TileSet.TILEHEIGHT));
+	}
+	
+	public void follow(Point p) {
+		createSimplePathTo(p);
 		pathToWalk.pathPoints.removeFirst();
 	}
 	
@@ -206,15 +227,38 @@ public abstract class Creature extends Entity {
 		return dirs;
 	}
 	
+	/**
+	 * Create path from current position to target position
+	 * 
+	 * @param target Point
+	 */
 	public void createSimplePathTo(Point target) {
 
 		pathToWalk.pathPoints.clear();
 		
-		Point tmp = new Point(Utils.adjustPosition(new Point(entityX, entityY), target));
+		/* adjust target coordinates */
+		target = Utils.adjustCoordinates(target.x, target.y);
+		
+//		Point tmp = new Point(Utils.adjustPosition(Utils.adjustCoordinates(entityX, entityY), target));
+		
+		/* set initial position */
+		Point tmp = Utils.adjustCoordinates(entityX, entityY);
+		
+		/* flag to switch between horizontal and vertical directions */
 		boolean flag = false;
 		
+		/* while current path point is not at target point */
 		while(tmp.getX() != target.getX() || tmp.getY() != target.getY()) {
 			
+			/* if one direction has reached the target point then do not switch */
+			if(tmp.getX() == target.getX()) {
+				flag = false;
+			}
+			if(tmp.getY() == target.getY()) {
+				flag = true;
+			}
+			
+			/* switch between hori and verti */
 			if(flag) {
 				if(tmp.getX() < target.getX()) {
 					tmp.setLocation((int)tmp.getX()+TileSet.TILEWIDTH, (int)tmp.getY());
@@ -231,10 +275,12 @@ public abstract class Creature extends Entity {
 			
 			flag = !flag;
 			
+			/* add current point to path list */
 			pathToWalk.pathPoints.addFirst(new Point((int)tmp.getX(), (int)tmp.getY()));
 			
 		}
 		
+		/* add last point to list */
 		pathToWalk.pathPoints.addFirst(tmp);
 		
 	}
