@@ -20,9 +20,12 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Random;
 
 import javax.imageio.ImageIO;
 
+import client.UserData;
 import client.gui.Camera;
 import client.gui.Level;
 import client.gui.OtherPlayer;
@@ -38,6 +41,11 @@ public class Utils {
 	public static final Font playerName = new Font(Font.MONOSPACED, Font.BOLD, 20);
 	public static final Color playerNameColor = new Color(0, 0, 64);
 	public static Font playerNameFont;
+	private static Random random;
+	
+	static {
+		random = new Random();
+	}
 
 	public static int getWidthOfString(String s, Graphics g) {
 		FontMetrics fm = g.getFontMetrics(playerName);
@@ -250,6 +258,15 @@ public class Utils {
 		return null;
 	}
 	
+	public static UserData getUserDataFromSetById(int id, HashSet<UserData> set) {
+		for(UserData ud : set) {
+			if(ud.getID() == id) {
+				return ud;
+			}
+		}
+		return null;
+	}
+	
 	/**
 	 * Check if a tile is clickable.
 	 * Clickable means it is reachable by a creature and thus selectable as target.
@@ -271,6 +288,32 @@ public class Utils {
 		}
 		
 		return true;
+	}
+	
+	public static Point getRandomDirection() {
+		int x = 0;
+		int y = 0;
+		/* horizontal or vertical */
+		if(random.nextBoolean()) {
+			/* left or right */
+			if(random.nextBoolean()) {
+				x = 1 * TileSet.TILEWIDTH;
+			}else {
+				x = -1 * TileSet.TILEWIDTH;
+			}
+		}else {
+			/* up or down */
+			if(random.nextBoolean()) {
+				y = 1 * TileSet.TILEHEIGHT;
+			}else {
+				y = -1 * TileSet.TILEHEIGHT;
+			}
+		}
+		return new Point(x,y);
+	}
+	
+	public static boolean moveWithPercentage(double probabilityToMove) {
+		return Math.random() >= 1.0 - probabilityToMove;
 	}
 	
 	public static boolean containsBlock(int[][] touched) {

@@ -1,9 +1,5 @@
 package client;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
-
 public class UserData {
 
 	private int ID;
@@ -14,13 +10,18 @@ public class UserData {
 	private int yMove;
 	private int xPos;
 	
-	public UserData(int ID, int x, int y, int xMove, int yMove, int xPos) {
+	private int health;
+	private int current_health;
+	
+	public UserData(int ID, int x, int y, int xMove, int yMove, int xPos, int health, int current_health) {
 		this.setID(ID);
 		this.setEntityX(x);
 		this.setEntityY(y);
 		this.setxMove(xMove);
 		this.setyMove(yMove);
 		this.setxPos(xPos);
+		this.setHealth(health);
+		this.setCurrent_health(current_health);
 	}
 
 	public int getEntityX() {
@@ -69,6 +70,22 @@ public class UserData {
 
 	public void setxPos(int xPos) {
 		this.xPos = xPos;
+	}
+
+	public int getHealth() {
+		return health;
+	}
+
+	public void setHealth(int health) {
+		this.health = health;
+	}
+
+	public int getCurrent_health() {
+		return current_health;
+	}
+
+	public void setCurrent_health(int current_health) {
+		this.current_health = current_health;
 	}
 	
 }

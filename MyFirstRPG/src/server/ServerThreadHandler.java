@@ -3,13 +3,18 @@ package server;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Random;
 
 import client.UserData;
 import debug.DebugMessageFactory;
+import model.NPCs.NPC;
 import model.NPCs.NPCData;
+import model.NPCs.NPCFactory;
 import model.items.ItemData;
+import util.FilePathFactory;
+import util.Utils;
 
 public class ServerThreadHandler extends Thread {
 
@@ -18,12 +23,17 @@ public class ServerThreadHandler extends Thread {
 	final public ServerThread[] m_clientConnections = new ServerThread[MAX_CLIENTS];
 	public ServerInformation info;
 	
+	public HashSet<Integer> tilesAllowed;
+	public int[][] map;
+	
 	public HashSet<UserData> userData;
 	public HashSet<ItemData> itemData;
 	public HashSet<NPCData> npcData;
+	public HashSet<NPC> npcs;
 	
 	public CreatureSpawnThread spawnThread;
 	
+	@SuppressWarnings("unused")
 	private UDP_Server udp_server;
 	
 	public ServerThreadHandler(int tcp_port, int udp_port) {
@@ -32,14 +42,17 @@ public class ServerThreadHandler extends Thread {
 		
 		info = new ServerInformation("SAM_SERVER", tcp_port);
 		
+		initMap();
+		
 		userData = new HashSet<>();
 		itemData = new HashSet<>();
 		npcData = new HashSet<>();
 		
-//		itemData.add(new ItemData(1, 1, 400, 400, 1));
+		npcs = new HashSet<>();
 		
-		npcData.add(new NPCData(1, 1, 400, 400, 10, 100, 100));
-		npcData.add(new NPCData(2, 1, 528, 400, 60, 100, 100));
+		NPCData d1 = new NPCData(1, 1, 400, 400, 3, 100, 100);
+		
+		addNPC(d1);
 		
 		spawnThread = new CreatureSpawnThread(this);
 		
@@ -54,6 +67,26 @@ public class ServerThreadHandler extends Thread {
 		
 		start();
 		new Thread(spawnThread).start();
+	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	private void initMap() {
+		
+		tilesAllowed = new HashSet(Arrays.asList(0));
+		
+		String[] tokens = Utils.loadFileAsString(FilePathFactory.BASE_DIR+"/rpg_new.map").split("\\s");
+		int sizeX = Utils.parseInt(tokens[0]);
+		int sizeY = Utils.parseInt(tokens[1]);
+		
+		map = new int[sizeX][sizeY];
+		
+		int i = 2;
+		
+		for (int y = 0; y < sizeY; y++) {
+			for (int x = 0; x < sizeX; x++) {
+				map[x][y] = Utils.parseInt(tokens[i++]);
+			}
+		}
 	}
 	
 	public void createUDPServer(int udp_port) {
@@ -122,6 +155,10 @@ public class ServerThreadHandler extends Thread {
 	
 	public void addNPC(NPCData data) {
 		npcData.add(data);
+		NPC npc = NPCFactory.getNpcFromNPCData(data);
+		npc.map = map;
+		npc.tilesAllowed = tilesAllowed;
+		npcs.add(npc);
 	}
 	
 	public void removeNPC(int id) {
@@ -132,15 +169,24 @@ public class ServerThreadHandler extends Thread {
 				break;
 			}
 		}
+		NPC toRemoveNPC = null;
+		for(NPC npc : npcs) {
+			if(npc.data.getId() == id) {
+				toRemoveNPC = npc;
+				break;
+			}
+		}
 
 		spawnThread.addCreatureToSpawn(toRemove);
 		npcData.remove(toRemove);
+		npcs.remove(toRemoveNPC);
 	}
 	
-	public void damageNPC(int id, int damage) {
+	public void damageNPC(int id, int damage, int idOfAttacker) {
 		for(NPCData npc : npcData) {
 			if(npc.getId() == id) {
 				npc.setCurrentHealth(npc.getCurrentHealth()-damage);
+				NPCFactory.getNpcById(id, npcs).attacker_id = idOfAttacker;
 				return;
 			}
 		}

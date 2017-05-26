@@ -198,6 +198,7 @@ public class Game implements Runnable {
 			String[] data = resArray[i].substring(1, resArray[i].length()-1).split(",");
 			
 			if(Integer.parseInt(data[0]) == player.getId()) {
+				player.content.current_health = Integer.parseInt(data[7]);
 				continue;
 			}
 			
@@ -205,6 +206,8 @@ public class Game implements Runnable {
 			op.xMove = Integer.parseInt(data[3]);
 			op.yMove = Integer.parseInt(data[4]);
 			op.xPos = Integer.parseInt(data[5]);
+			op.health = Integer.parseInt(data[6]);
+			op.currentHealth = Integer.parseInt(data[7]);
 			otherPlayers.add(op);
 		}
 	}
@@ -245,10 +248,22 @@ public class Game implements Runnable {
 		
 	}
 	
+	public void renderOtherPlayersBefore() {
+		for(OtherPlayer op : otherPlayers) {
+			op.renderBefore(graphics);
+		}
+	}
+	
 	public void renderOtherPlayers() {
 		for(OtherPlayer op : otherPlayers) {
 			op.setCurrentImage(op.xMove, op.yMove, op.xPos);
 			op.render(graphics);
+		}
+	}
+	
+	public void renderOtherPlayersAfter() {
+		for(OtherPlayer op : otherPlayers) {
+			op.renderAfter(graphics);
 		}
 	}
 	
@@ -258,9 +273,21 @@ public class Game implements Runnable {
 		}
 	}
 	
+	public void renderNPCsBefore() {
+		for(NPC npc : npcs) {
+			npc.renderBefore(graphics);
+		}
+	}
+	
 	public void renderNPCs() {
 		for(NPC npc : npcs) {
 			npc.render(graphics);
+		}
+	}
+	
+	public void renderNPCsAfter(Graphics g) {
+		for(NPC npc : npcs) {
+			npc.renderAfter(graphics);
 		}
 	}
 
@@ -281,18 +308,21 @@ public class Game implements Runnable {
 		level.renderMap(graphics);
 		
 		tileMarker.render(graphics);
+		
+		renderOtherPlayersBefore();
+		renderNPCsBefore();
 
 		renderOtherPlayers();
-		
 		renderItems();
-		
 		renderNPCs();
-
 		player.render(graphics);
+		
+		renderOtherPlayersAfter();
+		renderNPCsAfter(graphics);
+		player.renderAfter(graphics);
 		
 		hud.render(graphics);
 		
-
 		bufferStrategy.show();
 		graphics.dispose();
 

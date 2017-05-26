@@ -100,7 +100,8 @@ public class UDP_Server extends Thread {
 		
 		/* remove npc from item list */
 		if(request.contains("kill_")) {
-			handler.removeNPC(Integer.parseInt(request.replace("kill_", "")));
+			String[] tmp = request.replace("kill_", "").split("_");
+			handler.removeNPC(Integer.parseInt(tmp[0]));
 			return new String("OK").getBytes();
 		}
 		
@@ -109,7 +110,8 @@ public class UDP_Server extends Thread {
 			String[] tmp = request.replace("damage_npc_", "").split("_");
 			int id = Integer.parseInt(tmp[0]);
 			int damage = Integer.parseInt(tmp[1]);
-			handler.damageNPC(id, damage);
+			int idOfAttacker = Integer.parseInt(tmp[2]);
+			handler.damageNPC(id, damage, idOfAttacker);
 			return new String("OK").getBytes();
 		}
 		
@@ -135,7 +137,7 @@ public class UDP_Server extends Thread {
 		StringBuilder sb = new StringBuilder();
 		
 		for(UserData data : handler.userData) {
-			sb.append("["+data.getID()+","+data.getEntityX()+","+data.getEntityY()+","+data.getxMove()+","+data.getyMove()+","+data.getxPos()+"];");
+			sb.append("["+data.getID()+","+data.getEntityX()+","+data.getEntityY()+","+data.getxMove()+","+data.getyMove()+","+data.getxPos()+","+data.getHealth()+","+data.getCurrent_health()+"];");
 		}
 		
 		return sb.toString();
@@ -184,8 +186,10 @@ public class UDP_Server extends Thread {
 		int xMove = Integer.parseInt(arr[3]);
 		int yMove = Integer.parseInt(arr[4]);
 		int xPos = Integer.parseInt(arr[5]);
+		int health = Integer.parseInt(arr[6]);
+		int current_health = Integer.parseInt(arr[7]);
 		
-		return new UserData(id, x, y, xMove, yMove, xPos);
+		return new UserData(id, x, y, xMove, yMove, xPos, health, current_health);
 	}
 	
 	/**

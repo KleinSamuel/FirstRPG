@@ -42,7 +42,7 @@ public class ServerThread extends Thread{
 		}
 		
 		/* add data for client */
-		userData = new UserData(id, -100, -100, 0, 0, 0);
+		userData = new UserData(id, -100, -100, 0, 0, 0, 100, 100);
 		
 		start();
 	}
@@ -134,10 +134,6 @@ public class ServerThread extends Thread{
 		case "download_npc_eyeball_2":
 			sendFile(FilePathFactory.BASE_DIR+"/npc/eyeball_2.png");
 			break;
-			
-//		case "download_player_data":
-//			sendString(packUserInfoAsString());
-//			break;
 		}
 		
 	}
