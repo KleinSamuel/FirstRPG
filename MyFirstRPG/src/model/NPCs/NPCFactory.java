@@ -4,6 +4,8 @@ import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import client.UserData;
+import client.gui.Player;
 import model.FileManager;
 
 public class NPCFactory {
@@ -54,6 +56,19 @@ public class NPCFactory {
 		}
 		
 		return set;
+	}
+	
+	public static NPC getNpcFromNPCData(NPCData data) {
+		return new NPC(null, null, data, null);
+	}
+	
+	public static NPCData getDataFromSetById(int id, HashSet<NPCData> set) {
+		for(NPCData d : set) {
+			if(d.getId() == id) {
+				return d;
+			}
+		}
+		return null;
 	}
 	
 	public static NPC getNpcById(int id, HashSet<NPC> set) {

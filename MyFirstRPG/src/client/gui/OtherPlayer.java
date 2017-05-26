@@ -19,6 +19,10 @@ public class OtherPlayer extends Creature{
 		setId(Integer.parseInt(name));
 		this.game = game;
 	}
+	
+	public void renderBefore(Graphics g) {
+		
+	}
 
 	@Override
 	protected void render(Graphics g) {
@@ -28,6 +32,10 @@ public class OtherPlayer extends Creature{
 		
 		g.drawImage(image, draw_x, draw_y, width, height, null);
 		drawName(game, "Player "+id, Color.WHITE, draw_x, draw_y);
+		
+	}
+	
+	public void renderAfter(Graphics g) {
 		
 	}
 

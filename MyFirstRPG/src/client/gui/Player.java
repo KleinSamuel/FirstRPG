@@ -38,7 +38,7 @@ public class Player extends Creature {
 		entityX = content.x;
 		entityY = content.y;
 		
-		int actualid = game.udp_client.registerPlayer("userdata["+id+","+entityX+","+entityY+","+1+","+1+","+1+"]");
+		int actualid = game.udp_client.registerPlayer("userdata["+id+","+entityX+","+entityY+","+1+","+1+","+1+","+content.health+","+content.current_health+"]");
 		content.id = actualid;
 		this.id = actualid;
 	}
@@ -57,17 +57,18 @@ public class Player extends Creature {
 		
 		if(follows != null) {
 			follows = NPCFactory.getNpcById(follows.id, game.npcs);
+			follow(follows);
 		}
 		
 		if(isAttacking(System.currentTimeMillis())) {
 			turnPlayerToEnemy();
 			if(follows.currentHealth <= damage) {
-				game.udp_client.sendRequest("kill_"+follows.id);
+				game.udp_client.sendRequest("kill_"+follows.id+"_"+content.id);
 				checkIfLevelUp(ExperienceFactory.getGainedXpForLevel(((NPC)follows).data.getLevel()));
 				follows = null;
 				isFollowing = false;
 			}else {
-				game.udp_client.sendRequest("damage_npc_"+follows.id+"_"+damage);				
+				game.udp_client.sendRequest("damage_npc_"+follows.id+"_"+damage+"_"+content.id);				
 			}
 		}
 	}
@@ -122,6 +123,13 @@ public class Player extends Creature {
 		int draw_y = entityY - game.getGameCamera().getyOffset();
 		
 		g.drawImage(image, draw_x, draw_y, width, height, null);
+		
+	}
+	
+	public void renderAfter(Graphics g) {
+		
+		int draw_x = entityX - game.getGameCamera().getxOffset();
+		int draw_y = entityY - game.getGameCamera().getyOffset();
 		
 		Healthbar.render(draw_x, draw_y - 7, Entity.DEFAULT_WIDTH, content.health, content.current_health, g);
 		
