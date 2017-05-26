@@ -40,6 +40,9 @@ public class ClickManager implements MouseListener{
 		/* if user clicked on tile; mark this tile and create path to let entity walk */
 		Point p = Utils.screenToGlobal(e.getX(), e.getY(), game.getGameCamera());
 		
+//		boolean walkable = Utils.checkIfTileIsWalkableCoordinates(p.x, p.y, game.serverConnection.fileManager.walkableTiles, game.level.tileMap2D);
+//		System.out.println("IS WALKABLE -> "+walkable);
+		
 		/* check if player can move to clicked tile if not ignore the click */
 		if(!Utils.checkIfTileIsClickable(game.level, (int)p.getX(), (int)p.getY())) {
 			return;
@@ -49,7 +52,8 @@ public class ClickManager implements MouseListener{
 		int globalY = ((int)p.getY()) * TileSet.TILEHEIGHT;
 		
 		game.tileMarker.setNewPosition(globalX, globalY);
-		game.player.createSimplePathTo(new Point(globalX, globalY));
+//		game.player.createSimplePathTo(new Point(globalX, globalY));
+		game.player.createSmartPathTo(new Point(p.x, p.y));
 	}
 	
 	private NPC clickOnEnemy(Point p) {

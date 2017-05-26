@@ -4,7 +4,10 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
+import java.util.LinkedList;
 
+import model.AStarPathFinder;
+import model.FileManager;
 import model.NPCs.NPC;
 import util.Utils;
 
@@ -33,6 +36,8 @@ public abstract class Creature extends Entity {
 	public int damage = 10;
 	
 	public int attacker_id;
+	
+	public AStarPathFinder pathFinder;
 
 	public Creature(String name, Level level, SpriteSheet spriteSheet, int x, int y, int width, int height, int health, int currentHealth, int speed) {
 		super(name, spriteSheet.getSpriteElement(0, 1), x, y, width, height);
@@ -41,10 +46,7 @@ public abstract class Creature extends Entity {
 		this.health = health;
 		this.currentHealth = currentHealth;
 		this.speed = speed;
-		xMove = 0;
-		yMove = 0;
-		setPathToWalk(new Path());
-		attacker_id = -1;
+		init();
 	}
 	
 	public Creature(String name, Level level, BufferedImage bimg, int x, int y, int width, int height, int health, int speed) {
@@ -54,10 +56,15 @@ public abstract class Creature extends Entity {
 		this.health = health;
 		this.currentHealth = health;
 		this.speed = speed;
+		init();
+	}
+	
+	private void init() {
 		xMove = 0;
 		yMove = 0;
 		setPathToWalk(new Path());
 		attacker_id = -1;
+		pathFinder = new AStarPathFinder(FileManager.walkableTiles, Level.tileMap2D);
 	}
 	
 	/**
@@ -65,10 +72,7 @@ public abstract class Creature extends Entity {
 	 */
 	public Creature(int x, int y, int width, int height) {
 		super("", null, x, y, width, height);
-		xMove = 0;
-		yMove = 0;
-		setPathToWalk(new Path());
-		attacker_id = -1;
+		init();
 	}
 
 	int op = 1;
@@ -107,15 +111,15 @@ public abstract class Creature extends Entity {
 		if(isPlayer && pathToWalk.pathPoints.size() == 0 && xMove == 0 && yMove == 0) {
 			g.tileMarker.setVisible(false);
 		}
-
-		int[][] touched = level.getTilesTouched(this);
 		
-		for (int i = 0; i < touched.length; i++) {
-			if(Utils.containsBlock(touched)) {
-				entityX = oldX;
-				entityY = oldY;
-			}
-		}
+//		int[][] touched = level.getTilesTouched(this);
+//		
+//		for (int i = 0; i < touched.length; i++) {
+//			if(Utils.containsBlock(touched)) {
+//				entityX = oldX;
+//				entityY = oldY;
+//			}
+//		}
 		
 		if (slow++ >= 7) {
 			if (xMove == 0 && yMove == 0) {
@@ -225,6 +229,21 @@ public abstract class Creature extends Entity {
 		}
 		
 		return dirs;
+	}
+	
+	public void createSmartPathTo(Point target) {
+		Point adjPos = Utils.getArrayPosition(entityX, entityY);
+		LinkedList<Point> path = pathFinder.findPath(adjPos.x, adjPos.y, target.x, target.y);
+		
+		if(path == null) {
+			pathToWalk.pathPoints.clear();
+		}else {
+			for(Point p : path) {
+				p.setLocation(p.x*TileSet.TILEWIDTH, p.y*TileSet.TILEHEIGHT);
+			}
+			pathToWalk.pathPoints = path;
+		}
+		
 	}
 	
 	/**

@@ -10,6 +10,7 @@ import java.io.OutputStream;
 import java.net.Socket;
 
 import debug.DebugMessageFactory;
+import util.Utils;
 
 public class ClientConnectionEstablisher {
 
@@ -74,11 +75,17 @@ public class ClientConnectionEstablisher {
 		fileManager.map = FileEvent.byteArrayToString(mapEvent.getFileData());
 		DebugMessageFactory.printNormalMessage("\tDownloaded map.");
 		
-		/* download tileset */
+		/* download tile set */
 		sendRequest("download_tileset");
 		FileEvent tilesetEvent = downloadFileEvent();
 		fileManager.tileset = FileEvent.byteArrayToBufferedImage(tilesetEvent.getFileData());
 		DebugMessageFactory.printNormalMessage("\tDownloaded tileset.");
+		
+		/* download walkable tiles */
+		sendRequest("download_walkable_tiles");
+		FileEvent walkTilesEvent = downloadFileEvent();
+		fileManager.walkableTiles = Utils.resolveStringAsHashSet(FileEvent.byteArrayToString(walkTilesEvent.getFileData()), ",");
+		DebugMessageFactory.printNormalMessage("\tDownloaded walkable tiles.");
 		
 		/* download playerSheet */
 		sendRequest("download_playersheet");
@@ -129,7 +136,15 @@ public class ClientConnectionEstablisher {
 		sendRequest("download_npc_eyeball_2");
 		FileEvent npc_eyeball_2_Event = downloadFileEvent();
 		fileManager.eyeball_2_image = FileEvent.byteArrayToBufferedImage(npc_eyeball_2_Event.getFileData());
-		DebugMessageFactory.printNormalMessage("\tDownloaded NPC eyeball.");
+		
+		sendRequest("download_npc_grey_mouse_1");
+		FileEvent npc_grey_mouse_1_Event = downloadFileEvent();
+		fileManager.grey_mouse_1_image = FileEvent.byteArrayToBufferedImage(npc_grey_mouse_1_Event.getFileData());
+		sendRequest("download_npc_grey_mouse_2");
+		FileEvent npc_grey_mouse_2_Event = downloadFileEvent();
+		fileManager.grey_mouse_2_image = FileEvent.byteArrayToBufferedImage(npc_grey_mouse_2_Event.getFileData());
+		
+		DebugMessageFactory.printNormalMessage("\tDownloaded NPCs.");
 		
 		DebugMessageFactory.printNormalMessage("FINISHED DOWNLOADING FILES.");
 		
