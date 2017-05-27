@@ -5,10 +5,11 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Random;
 
 import client.UserData;
+import client.gui.Level;
 import debug.DebugMessageFactory;
+import model.FileManager;
 import model.NPCs.NPC;
 import model.NPCs.NPCData;
 import model.NPCs.NPCFactory;
@@ -54,10 +55,10 @@ public class ServerThreadHandler extends Thread {
 		
 		npcs = new HashSet<>();
 		
-		NPCData d1 = new NPCData(1, 1, 400, 400, 3, 100, 100);
-		NPCData d2 = new NPCData(2, 2, 640, 640, 12, 100, 100);
+		NPCData d1 = new NPCData(1, 1, 128, 128, 3, 100, 100);
+//		NPCData d2 = new NPCData(2, 2, 640, 640, 12, 100, 100);
 		
-//		addNPC(d1);
+		addNPC(d1);
 //		addNPC(d2);
 		
 		spawnThread = new CreatureSpawnThread(this);
@@ -93,6 +94,9 @@ public class ServerThreadHandler extends Thread {
 				map[x][y] = Utils.parseInt(tokens[i++]);
 			}
 		}
+		
+		FileManager.walkableTiles = tilesAllowed;
+		Level.tileMap2D = map;
 	}
 	
 	public void createUDPServer(int udp_port) {

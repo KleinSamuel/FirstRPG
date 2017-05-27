@@ -27,8 +27,11 @@ import javax.imageio.ImageIO;
 
 import client.UserData;
 import client.gui.Camera;
+import client.gui.Creature;
+import client.gui.Entity;
 import client.gui.Level;
 import client.gui.OtherPlayer;
+import client.gui.Player;
 import client.gui.TileSet;
 
 /**
@@ -217,6 +220,46 @@ public class Utils {
 	public static Point getArrayPosition(int x, int y) {
 		return new Point(x/TileSet.TILEWIDTH, y/TileSet.TILEHEIGHT);
 	}
+	
+	public static Point getArrayPositionHard(int x, int y) {
+		int middleX = x+(TileSet.TILEWIDTH/2);
+		int middleY = y+(TileSet.TILEHEIGHT/2);
+		return new Point(middleX/TileSet.TILEWIDTH, middleY/TileSet.TILEHEIGHT);
+	}
+	
+	public static double getDistance(Point a, Point b) {
+		double ank1 = Math.pow(Math.abs(a.x-b.x), 2);
+		double ank2 = Math.pow(Math.abs(a.y-b.y), 2);
+		return Math.sqrt(ank1+ank2);
+	}
+	
+	public static Point getCreatureArrayPositionPredicted(int x, int y, int dir) {
+		/* creature moving horizontal */
+		if(x%TileSet.TILEWIDTH != 0) {
+//			System.out.println("x dirty");
+			/* moving left */
+			if(dir == 3) {
+				return new Point(((x/TileSet.TILEWIDTH)*TileSet.TILEWIDTH), (y/TileSet.TILEHEIGHT)*TileSet.TILEHEIGHT);
+			}
+			/* moving right */
+			else if(dir == 1) {
+				return new Point((((x/TileSet.TILEWIDTH)+1)*TileSet.TILEWIDTH), (y/TileSet.TILEHEIGHT)*TileSet.TILEHEIGHT);
+			}
+		}
+		/* creature moving vertical */
+		else if(y%TileSet.TILEHEIGHT != 0) {
+//			System.out.println("y dirty");
+			/* moving up */
+			if(dir == 4) {
+				return new Point(((x/TileSet.TILEWIDTH)*TileSet.TILEWIDTH), (y/TileSet.TILEHEIGHT)*TileSet.TILEHEIGHT);
+			}
+			/* moving down */
+			else if(dir == 2) {
+				return new Point(((x/TileSet.TILEWIDTH)*TileSet.TILEWIDTH), ((y/TileSet.TILEHEIGHT)+1)*TileSet.TILEHEIGHT);
+			}
+		}
+		return getArrayPosition(x, y);
+	}
 
 	/**
 	 * Adjust position when creature is in between two tiles. Chooses tile
@@ -351,6 +394,37 @@ public class Utils {
 			set.add(Integer.parseInt(arr[i]));
 		}
 		return set;
+	}
+	
+	/**
+	 * IN ARRAY COORDINATES
+	 * 
+	 * @param target
+	 * @param chaser
+	 * @return
+	 */
+	public static boolean isInRange(Point target, Point chaser) {
+		if(Math.abs(target.x-chaser.x) == 0) {
+			if(Math.abs(target.y-chaser.y) <= 1) {
+				return true;
+			}
+			return false;
+		}
+		if(Math.abs(target.y-chaser.y) == 0) {
+			if(Math.abs(target.x-chaser.x) <= 1) {
+				return true;
+			}
+			return false;
+		}
+		return false;
+	}
+	
+	public static Point getArrayCoordinatesForCreature(Point old, Point current) {
+		if(current.x % TileSet.TILEWIDTH == 0 && current.y % TileSet.TILEHEIGHT == 0) {
+			return Utils.getArrayPosition(current.x, current.y);
+		}else {
+			return old;
+		}
 	}
 	
 	/**

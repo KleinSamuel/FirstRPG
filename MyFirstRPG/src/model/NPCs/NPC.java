@@ -10,7 +10,6 @@ import client.gui.Creature;
 import client.gui.Entity;
 import client.gui.Game;
 import client.gui.Healthbar;
-import client.gui.Level;
 import client.gui.TileSet;
 import util.Utils;
 
@@ -27,8 +26,8 @@ public class NPC extends Creature{
 	public int[][] map;
 	public HashSet<Integer> tilesAllowed;
 	
-	public NPC(Game game, Level level, NPCData data, BufferedImage bimg) {
-		super(""+data.getId(), level, bimg, data.getX(), data.getY(), NPCFactory.NPC_WIDTH, NPCFactory.NPC_HEIGHT, 100, 1);
+	public NPC(Game game, NPCData data, BufferedImage bimg) {
+		super(""+data.getId(), bimg, data.getX(), data.getY(), NPCFactory.NPC_WIDTH, NPCFactory.NPC_HEIGHT, 100, 1);
 		this.game = game;
 		this.data = data;
 		this.image = bimg;
@@ -51,12 +50,12 @@ public class NPC extends Creature{
 	}
 	
 	public void moveSimpleAI() {
-		if(toFollow_id < 0) {
-			moveRandom();
-		}else {
-			Point toGo = walkOnPath();
-			moveNPC(toGo.x, toGo.y);
-		}
+//		if(toFollow_id < 0) {
+//			moveRandom();
+//		}else {
+//			Point toGo = walkOnPath();
+//			moveNPC(toGo.x, toGo.y);
+//		}
 	}
 	
 	public void moveRandom() {
@@ -120,7 +119,7 @@ public class NPC extends Creature{
 		int draw_x = entityX - game.getGameCamera().getxOffset();
 		int draw_y = entityY - game.getGameCamera().getyOffset();
 		
-		drawObservableRange(g, draw_x+(Entity.DEFAULT_WIDTH/4), draw_y+(Entity.DEFAULT_WIDTH/4));
+		drawObservableRange(g, draw_x+(Entity.DEFAULT_WIDTH/2), draw_y+(Entity.DEFAULT_WIDTH/2));
 	}
 	
 	@Override
@@ -129,7 +128,7 @@ public class NPC extends Creature{
 		int draw_x = entityX - game.getGameCamera().getxOffset();
 		int draw_y = entityY - game.getGameCamera().getyOffset();
 		
-		g.drawImage(image, draw_x - padding_left, draw_y - padding_left, width, height, null);
+		g.drawImage(image, draw_x + padding_left, draw_y + padding_left, width, height, null);
 		
 	}
 	
@@ -138,12 +137,12 @@ public class NPC extends Creature{
 		int draw_x = entityX - game.getGameCamera().getxOffset();
 		int draw_y = entityY - game.getGameCamera().getyOffset();
 
-		Healthbar.render(draw_x - padding_left, draw_y - padding_left - padding_top, NPCFactory.NPC_WIDTH, data.getHealth(), data.getCurrentHealth(), g);
+		Healthbar.render(draw_x + padding_left, draw_y + padding_left - padding_top, NPCFactory.NPC_WIDTH, data.getHealth(), data.getCurrentHealth(), g);
 		
 		String name = NPCFactory.npcs.get(data.getNpc_key()).toString();
-		drawName(game, name, Color.BLACK, draw_x - padding_left, draw_y - padding_left - padding_top - 3);
+		drawName(game, name, Color.BLACK, draw_x + padding_left, draw_y + padding_left - padding_top - 3);
 		
-		drawLevel(game, data.getLevel(), Color.BLACK, draw_x - padding_left, draw_y - padding_left - padding_top - padding_top);
+		drawLevel(game, data.getLevel(), Color.BLACK, draw_x + padding_left, draw_y + padding_left - padding_top - padding_top);
 	}
 	
 	private void drawObservableRange(Graphics g, int x, int y) {

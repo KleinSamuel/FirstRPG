@@ -2,6 +2,7 @@ package client.gui;
 
 import java.awt.Canvas;
 import java.awt.Graphics;
+import java.awt.Point;
 import java.awt.image.BufferStrategy;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -102,7 +103,7 @@ public class Game implements Runnable {
 		level = new Level(this, serverConnection.fileManager.map, tileSet, true);
 		
 		playerSprite = new SpriteSheet(serverConnection.fileManager.playerSheet, 3, 4, 64, 64);
-		player = new Player(this, level, 320, 320, playerSprite);
+		player = new Player(this, 320, 320, playerSprite);
 		
 		Utils.setFontForPlayerName(50);
 		
@@ -173,8 +174,6 @@ public class Game implements Runnable {
 	public void update() {
 		keyManager.update();
 		
-		player.setMove(player.walkOnPath());
-		
 		updateOtherPlayers();
 		updateItems();
 		updateNPCs();
@@ -202,7 +201,7 @@ public class Game implements Runnable {
 				continue;
 			}
 			
-			OtherPlayer op = new OtherPlayer(this, ""+Integer.parseInt(data[0]), level, playerSprite, Integer.parseInt(data[1]), Integer.parseInt(data[2]));
+			OtherPlayer op = new OtherPlayer(this, ""+Integer.parseInt(data[0]), playerSprite, Integer.parseInt(data[1]), Integer.parseInt(data[2]));
 			op.xMove = Integer.parseInt(data[3]);
 			op.yMove = Integer.parseInt(data[4]);
 			op.xPos = Integer.parseInt(data[5]);
@@ -243,7 +242,7 @@ public class Game implements Runnable {
 		HashSet<NPCData> npcDataSet = NPCFactory.getNpcDataFromString(result);
 		
 		for(NPCData data : npcDataSet) {
-			npcs.add(new NPC(this, level, data, NPCFactory.getImageForNpcID(serverConnection.fileManager, data.getNpc_key(), npcFirst)));
+			npcs.add(new NPC(this, data, NPCFactory.getImageForNpcID(serverConnection.fileManager, data.getNpc_key(), npcFirst)));
 		}
 		
 	}
@@ -311,7 +310,8 @@ public class Game implements Runnable {
 		
 		renderOtherPlayersBefore();
 		renderNPCsBefore();
-
+		player.renderBefore(graphics);
+		
 		renderOtherPlayers();
 		renderItems();
 		renderNPCs();
@@ -327,26 +327,6 @@ public class Game implements Runnable {
 		graphics.dispose();
 
 	}
-
-//	private Point getInput() {
-//		int xMove = 0;
-//		int yMove = 0;
-//		
-//		if (keyManager.up) {
-//			yMove = -1;
-//		}
-//		if (keyManager.down) {
-//			yMove = 1;
-//		}
-//		if (keyManager.left) {
-//			xMove = -1;
-//		}
-//		if (keyManager.right) {
-//			xMove = 1;
-//		}
-//		
-//		return new Point(xMove, yMove);
-//	}
 	
 	public Camera getGameCamera() {
 		return camera;

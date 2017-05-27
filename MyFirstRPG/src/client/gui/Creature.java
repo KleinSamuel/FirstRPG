@@ -8,7 +8,6 @@ import java.util.LinkedList;
 
 import model.AStarPathFinder;
 import model.FileManager;
-import model.NPCs.NPC;
 import util.Utils;
 
 public abstract class Creature extends Entity {
@@ -22,7 +21,6 @@ public abstract class Creature extends Entity {
 	public int currentHealth;
 	protected int speed;
 	protected int xMove, yMove;
-	private Level level;
 	SpriteSheet spriteSheet;
 
 	int prevDirection;
@@ -39,9 +37,8 @@ public abstract class Creature extends Entity {
 	
 	public AStarPathFinder pathFinder;
 
-	public Creature(String name, Level level, SpriteSheet spriteSheet, int x, int y, int width, int height, int health, int currentHealth, int speed) {
+	public Creature(String name, SpriteSheet spriteSheet, int x, int y, int width, int height, int health, int currentHealth, int speed) {
 		super(name, spriteSheet.getSpriteElement(0, 1), x, y, width, height);
-		this.level = level;
 		this.spriteSheet = spriteSheet;
 		this.health = health;
 		this.currentHealth = currentHealth;
@@ -49,10 +46,9 @@ public abstract class Creature extends Entity {
 		init();
 	}
 	
-	public Creature(String name, Level level, BufferedImage bimg, int x, int y, int width, int height, int health, int speed) {
+	public Creature(String name, BufferedImage bimg, int x, int y, int width, int height, int health, int speed) {
 		super(name, bimg, x, y, width, height);
 		this.id = Integer.parseInt(name);
-		this.level = level;
 		this.health = health;
 		this.currentHealth = health;
 		this.speed = speed;
@@ -78,8 +74,6 @@ public abstract class Creature extends Entity {
 	int op = 1;
 	int slow = 0;
 	int xPos = 0;
-	private int oldX;
-	private int oldY;
 	
 	private boolean directlyAfter = false;
 	private int oldDirX;
@@ -102,24 +96,15 @@ public abstract class Creature extends Entity {
 	}
 
 	public void move(Game g, int id, boolean isPlayer) {
-		oldX = entityX;
-		oldY = entityY;
 		entityX += xMove * speed;
 		entityY += yMove * speed;
 		
 		/* if player reached target */
 		if(isPlayer && pathToWalk.pathPoints.size() == 0 && xMove == 0 && yMove == 0) {
 			g.tileMarker.setVisible(false);
+		}else {
+			g.tileMarker.setVisible(true);
 		}
-		
-//		int[][] touched = level.getTilesTouched(this);
-//		
-//		for (int i = 0; i < touched.length; i++) {
-//			if(Utils.containsBlock(touched)) {
-//				entityX = oldX;
-//				entityY = oldY;
-//			}
-//		}
 		
 		if (slow++ >= 7) {
 			if (xMove == 0 && yMove == 0) {
@@ -197,13 +182,35 @@ public abstract class Creature extends Entity {
 		return new Point(xMove, yMove);
 	}
 	
-	public void follow(Creature creature) {
-		follow(new Point((creature.entityX/TileSet.TILEWIDTH)*TileSet.TILEWIDTH, (creature.entityY/TileSet.TILEHEIGHT)*TileSet.TILEHEIGHT));
+	/**
+	 * IN PIXEL COORDINATES
+	 * 
+	 * @param creature
+	 * @param dir
+	 * @param approaching
+	 */
+	public void follow(Creature creature, Point oldArray, boolean isPlayer) {
+		follow(new Point(creature.entityX, creature.entityY), oldArray, isPlayer);
 	}
 	
-	public void follow(Point p) {
-		createSimplePathTo(p);
-		pathToWalk.pathPoints.removeFirst();
+	/**
+	 * IN PIXEL COORDINATES
+	 */
+	public void follow(Point p, Point oldArray, boolean isPlayer) {
+		createSmartPathTo(p, oldArray);
+		
+		if(pathToWalk.pathPoints.size() >= 1) {
+			pathToWalk.pathPoints.removeLast();
+		}
+		if(pathToWalk.pathPoints.size() >= 1) {
+			pathToWalk.pathPoints.removeFirst();
+		}
+		if(isPlayer) {
+			if(pathToWalk.pathPoints.size() >= 1) {
+				pathToWalk.pathPoints.removeFirst();
+			}
+		}
+
 	}
 	
 	/**
@@ -220,7 +227,6 @@ public abstract class Creature extends Entity {
 		}
 		
 		Point currentWayPoint = pathToWalk.pathPoints.getLast();
-		
 		Point dirs = walkToPoint(currentWayPoint);
 		
 		if(dirs == null) {
@@ -231,9 +237,11 @@ public abstract class Creature extends Entity {
 		return dirs;
 	}
 	
-	public void createSmartPathTo(Point target) {
-		Point adjPos = Utils.getArrayPosition(entityX, entityY);
-		LinkedList<Point> path = pathFinder.findPath(adjPos.x, adjPos.y, target.x, target.y);
+	public void createSmartPathTo(Point target, Point old) {
+		Point adjPosTarget = Utils.getArrayPosition(target.x, target.y);
+		Point adjPosChaser = old;
+		
+		LinkedList<Point> path = pathFinder.findPath(adjPosChaser.x, adjPosChaser.y, adjPosTarget.x, adjPosTarget.y);
 		
 		if(path == null) {
 			pathToWalk.pathPoints.clear();
@@ -243,7 +251,6 @@ public abstract class Creature extends Entity {
 			}
 			pathToWalk.pathPoints = path;
 		}
-		
 	}
 	
 	/**
@@ -257,8 +264,6 @@ public abstract class Creature extends Entity {
 		
 		/* adjust target coordinates */
 		target = Utils.adjustCoordinates(target.x, target.y);
-		
-//		Point tmp = new Point(Utils.adjustPosition(Utils.adjustCoordinates(entityX, entityY), target));
 		
 		/* set initial position */
 		Point tmp = Utils.adjustCoordinates(entityX, entityY);
@@ -327,9 +332,6 @@ public abstract class Creature extends Entity {
 	public boolean isAttacking(long time) {
 		
 		if(!isFollowing) {
-			return false;
-		}
-		if(pathToWalk.pathPoints.size() > 1) {
 			return false;
 		}
 		

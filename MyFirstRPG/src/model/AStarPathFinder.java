@@ -4,8 +4,6 @@ import java.awt.Point;
 import java.util.HashSet;
 import java.util.LinkedList;
 
-import debug.DebugMessageFactory;
-
 public class AStarPathFinder {
 
 	private HashSet<Integer> walkableTiles;

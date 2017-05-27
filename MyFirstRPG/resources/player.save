@@ -1,11 +1,11 @@
-id:3
-name:PLAYER_-1
-x:256
-y:320
+id:64
+name:PLAYER_1
+x:128
+y:256
 level:6
-exp:53
+exp:60
 health:12500
-currenthealth:11510
+currenthealth:3910
 mana:200
 currentmana:200
 money:0

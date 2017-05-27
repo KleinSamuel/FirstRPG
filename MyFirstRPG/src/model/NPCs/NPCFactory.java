@@ -66,7 +66,7 @@ public class NPCFactory {
 	}
 	
 	public static NPC getNpcFromNPCData(NPCData data) {
-		return new NPC(null, null, data, null);
+		return new NPC(null, data, null);
 	}
 	
 	public static NPCData getDataFromSetById(int id, HashSet<NPCData> set) {

@@ -117,11 +117,4 @@ public class UDP_Client {
 			e.printStackTrace();
 		}
 	}
-	
-	public static void main(String[] args) {
-		
-		UDP_Client cl = new UDP_Client(6066, "localhost");
-		
-	}
-	
 }

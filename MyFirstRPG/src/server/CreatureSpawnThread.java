@@ -6,8 +6,6 @@ import java.util.Map.Entry;
 import java.util.Random;
 
 import client.UserData;
-import client.gui.Creature;
-import client.gui.TileSet;
 import model.NPCs.NPC;
 import model.NPCs.NPCData;
 import model.NPCs.NPCFactory;
@@ -26,6 +24,7 @@ public class CreatureSpawnThread implements Runnable{
 	
 	private static final int CREATURE_SPAWN_TIMER = 5000;
 	
+	@SuppressWarnings("unused")
 	private Random random;
 	
 	public CreatureSpawnThread(ServerThreadHandler handler) {
@@ -108,12 +107,11 @@ public class CreatureSpawnThread implements Runnable{
 				
 				/* follow enemy */
 				Point fP = Utils.adjustCoordinates(ud.getEntityX(), ud.getEntityY());
-				npc.follow(fP);
+//				npc.follow(new Point(ud.getEntityX(), ud.getEntityY()), false);
 				npc.moveSimpleAI();
 				
 				/* attack enemy if in range */
 				if(npc.isAttacking(System.currentTimeMillis())) {
-					System.out.println("NPC ATTACKING!");
 					ud.setCurrent_health(ud.getCurrent_health()-10);
 				}
 				

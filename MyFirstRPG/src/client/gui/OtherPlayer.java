@@ -14,8 +14,8 @@ public class OtherPlayer extends Creature{
 	
 	private int id;
 	
-	public OtherPlayer(Game game, String name, Level level, SpriteSheet spriteSheet, int x, int y) {
-		super(name, level, spriteSheet, x, y, OtherPlayer.DEFAULT_WIDTH, OtherPlayer.DEFAULT_HEIGHT, OtherPlayer.DEFAULT_HEALTH, OtherPlayer.DEFAULT_HEALTH, OtherPlayer.DEFAULT_SPEED);
+	public OtherPlayer(Game game, String name, SpriteSheet spriteSheet, int x, int y) {
+		super(name, spriteSheet, x, y, OtherPlayer.DEFAULT_WIDTH, OtherPlayer.DEFAULT_HEIGHT, OtherPlayer.DEFAULT_HEALTH, OtherPlayer.DEFAULT_HEALTH, OtherPlayer.DEFAULT_SPEED);
 		setId(Integer.parseInt(name));
 		this.game = game;
 	}
