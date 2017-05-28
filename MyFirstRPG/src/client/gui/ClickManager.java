@@ -4,6 +4,7 @@ import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
+import client.hud.HUD_Bag;
 import model.NPCs.NPC;
 import util.Utils;
 
@@ -18,14 +19,17 @@ public class ClickManager implements MouseListener{
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		
+		if(HUD_Bag.DRAW_BAG) {
+			game.hud.hud_bag.handleClick(e.getX(), e.getY());
+			return;
+		}
+		
 		/* check if user clicked on MENU */
 		if(game.hud.clickOnMenu(new Point(e.getX(), e.getY()))) {
-			HUD_Bag.DRAW_BAG = !HUD_Bag.DRAW_BAG;
+			HUD_Bag.DRAW_BAG = true;
 			return;
 		}
-		if(HUD_Bag.DRAW_BAG) {
-			return;
-		}
+		
 		
 		NPC enemy = clickOnEnemy(Utils.screenToGlobal(e.getX(), e.getY(), game.getGameCamera()));
 		if(enemy != null) {
@@ -49,7 +53,7 @@ public class ClickManager implements MouseListener{
 		int globalY = ((int)p.getY()) * TileSet.TILEHEIGHT;
 		
 		game.tileMarker.setNewPosition(globalX, globalY);
-		game.player.createSmartPathTo(new Point(globalX, globalY), new Point(game.player.oldArrayX, game.player.oldArrayY));
+		game.player.createSmartPathTo(new Point(globalX, globalY), Utils.getArrayPosition(game.player.entityX, game.player.entityY));
 	}
 	
 	private NPC clickOnEnemy(Point p) {

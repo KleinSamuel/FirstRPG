@@ -12,8 +12,7 @@ import util.Utils;
 
 public abstract class Creature extends Entity {
 
-	public static final int DEFAULT_HEALTH = 10;
-	public static final int DEFAULT_SPEED = 3;
+	public static final int DEFAULT_SPEED = 2;
 	public static final int DEFAULT_NAME_OFFSET = 3;
 
 	public int id;

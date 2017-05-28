@@ -106,8 +106,7 @@ public class CreatureSpawnThread implements Runnable{
 				}
 				
 				/* follow enemy */
-				Point fP = Utils.adjustCoordinates(ud.getEntityX(), ud.getEntityY());
-//				npc.follow(new Point(ud.getEntityX(), ud.getEntityY()), false);
+				npc.follow(new Point(ud.getEntityX(), ud.getEntityY()), new Point(npc.oldArrayX, npc.oldArrayY), false);
 				npc.moveSimpleAI();
 				
 				/* attack enemy if in range */

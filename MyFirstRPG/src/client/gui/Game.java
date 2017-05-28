@@ -2,11 +2,11 @@ package client.gui;
 
 import java.awt.Canvas;
 import java.awt.Graphics;
-import java.awt.Point;
 import java.awt.image.BufferStrategy;
 import java.util.Arrays;
 import java.util.HashSet;
 
+import client.hud.HUD;
 import debug.DebugMessageFactory;
 import model.ClientConnectionEstablisher;
 import model.NPCs.NPC;
@@ -26,6 +26,8 @@ public class Game implements Runnable {
 	long lastLoopTime = System.nanoTime();
 	final long OPTIMAL_TIME = 1000000000 / FPS;
 	
+	public static boolean LOAD_RESOURCES_FROM_SERVER = true;
+	
 	public static int CURRENT_FPS;
 	
 	public static final long maxRefreshTime = 60;
@@ -44,7 +46,7 @@ public class Game implements Runnable {
 
 	Screen screen;
 	Level level;
-	Player player;
+	public Player player;
 	TileMarker tileMarker;
 	
 	KeyManager keyManager;
@@ -68,8 +70,12 @@ public class Game implements Runnable {
 		if (!flag) {
 			System.exit(0);
 		}
-
-		serverConnection.downloadInitStuff();
+			
+		if(LOAD_RESOURCES_FROM_SERVER) {
+			serverConnection.downloadInitStuff();
+		}else {
+			
+		}
 		
 		udp_client = new UDP_Client(Integer.parseInt(udp_port), servername);
 
@@ -109,7 +115,7 @@ public class Game implements Runnable {
 		
 		hud = new HUD(this, player);
 		
-		tileMarker = new TileMarker(this, serverConnection.fileManager.tileMarkerImage, 0, 0);
+		tileMarker = new TileMarker(this, serverConnection.fileManager.tileMarkerImage, serverConnection.fileManager.tileMarkerRedImage, 0, 0);
 		
 		camera = new Camera(level.getSizeX(), level.getSizeY());
 		

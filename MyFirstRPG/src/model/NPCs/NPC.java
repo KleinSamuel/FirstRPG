@@ -21,10 +21,14 @@ public class NPC extends Creature{
 	private int padding_left;
 	private int padding_top = 15;
 	
-	public final int OBSERVABLE_RANGE = 1;
+	public final int OBSERVABLE_RANGE = 2;
+	public final int OBSERVABLE_FACTOR = 1;
 	public int toFollow_id;
 	public int[][] map;
 	public HashSet<Integer> tilesAllowed;
+	
+	public int oldArrayX;
+	public int oldArrayY;
 	
 	public NPC(Game game, NPCData data, BufferedImage bimg) {
 		super(""+data.getId(), bimg, data.getX(), data.getY(), NPCFactory.NPC_WIDTH, NPCFactory.NPC_HEIGHT, 100, 1);
@@ -32,6 +36,10 @@ public class NPC extends Creature{
 		this.data = data;
 		this.image = bimg;
 		currentHealth = data.getCurrentHealth();
+		
+		Point oldP = Utils.getArrayPosition(entityX, entityY);
+		oldArrayX = oldP.x;
+		oldArrayY = oldP.y;
 		
 		padding_left = (TileSet.TILEWIDTH-NPCFactory.NPC_WIDTH)/2;
 		toFollow_id = -1;
@@ -42,20 +50,28 @@ public class NPC extends Creature{
 		
 	}
 	
+	public void updateOldCoordinates() {
+		if(entityX % TileSet.TILEWIDTH == 0 && entityY % TileSet.TILEHEIGHT == 0) {
+			oldArrayX = entityX/TileSet.TILEWIDTH;
+			oldArrayY = entityY/TileSet.TILEHEIGHT;
+		}
+	}
+	
 	public void moveNPC(int xMove, int yMove) {
 		data.setX(data.getX()+xMove*speed);
 		data.setY(data.getY()+yMove*speed);
 		entityX += xMove*speed;
 		entityY += yMove*speed;
+		updateOldCoordinates();
 	}
 	
 	public void moveSimpleAI() {
-//		if(toFollow_id < 0) {
-//			moveRandom();
-//		}else {
-//			Point toGo = walkOnPath();
-//			moveNPC(toGo.x, toGo.y);
-//		}
+		if(toFollow_id < 0) {
+			moveRandom();
+		}else {
+			Point toGo = walkOnPath();
+			moveNPC(toGo.x, toGo.y);
+		}
 	}
 	
 	public void moveRandom() {
@@ -102,7 +118,7 @@ public class NPC extends Creature{
 	
 	public boolean outOfObservableRange(int xCoord, int yCoord) {
 		Point p =Utils.getArrayPosition(data.getX(), data.getY());
-		if(Math.abs(p.x-xCoord) > 2*OBSERVABLE_RANGE || Math.abs(p.y-yCoord) > 2*OBSERVABLE_RANGE) {
+		if(Math.abs(p.x-xCoord) > OBSERVABLE_FACTOR*OBSERVABLE_RANGE || Math.abs(p.y-yCoord) > OBSERVABLE_FACTOR*OBSERVABLE_RANGE) {
 			return true;
 		}
 		return false;
@@ -119,7 +135,7 @@ public class NPC extends Creature{
 		int draw_x = entityX - game.getGameCamera().getxOffset();
 		int draw_y = entityY - game.getGameCamera().getyOffset();
 		
-		drawObservableRange(g, draw_x+(Entity.DEFAULT_WIDTH/2), draw_y+(Entity.DEFAULT_WIDTH/2));
+//		drawObservableRange(g, draw_x+(Entity.DEFAULT_WIDTH/2), draw_y+(Entity.DEFAULT_WIDTH/2));
 	}
 	
 	@Override
@@ -149,7 +165,7 @@ public class NPC extends Creature{
 		int r = 2*OBSERVABLE_RANGE*TileSet.TILEWIDTH+(TileSet.TILEWIDTH);
 		g.setColor(new Color(255, 0, 0, 50));
 		g.fillOval(x-(r/2), y-(r/2), r, r);
-		r *= 2;
+		r *= OBSERVABLE_FACTOR;
 		g.fillOval(x-(r/2), y-(r/2), r, r);
 	}
 }
