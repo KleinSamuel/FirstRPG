@@ -18,6 +18,7 @@ public class ItemFactory {
 		items.put(1, ItemEnum.POTION_HEALTH_1);
 		items.put(2, ItemEnum.POTION_MANA_1);
 		items.put(3, ItemEnum.ARROWS_1);
+		items.put(3, ItemEnum.HELMET_3);
 	}
 	
 	public static HashSet<ItemData> getItemDataFromString(String input) {
@@ -48,9 +49,45 @@ public class ItemFactory {
 			return manager.mana_1_image;
 		case 3:
 			return manager.arrows_1_image;
+		case 4:
+			return manager.helmet_3_image;
 		}
 		
 		return null;
+	}
+	
+	public static String getNameOfItemById(int itemId) {
+		switch (itemId) {
+		case 1:
+			return "HEALTH POTION";
+		case 2:
+			return "MANA POTION";
+		case 3:
+			return "WOOD ARROWS";
+		default:
+			return "NOT AVAILABLE";
+		}
+	}
+	
+	public static String getDescriptionOfItemById(int itemId) {
+		switch (itemId) {
+		case 1:
+			return "A delicious red potion which restores a given\n"
+					+ "amount of health points of the lucky person\n"
+					+ "to drink it.\n"
+					+ "One of the most common items to be found.";
+		case 2:
+			return "A disgusting blue potion which smells like troll\n"
+					+ "sweat. What does not kill you makes you stronger.\n"
+					+ "One of the most common items to be found.";
+		case 3:
+			return "Short fragile wooden arrows. Probably crafted by\n"
+					+ "the carpenters apprentice. Still does decent\n"
+					+ "damage to eye balls when well targeted.\n"
+					+ "One of the most common items to be found.";
+		default:
+			return "Description not available.";
+		}
 	}
 	
 }

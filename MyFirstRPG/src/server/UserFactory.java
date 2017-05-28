@@ -19,6 +19,7 @@ public class UserFactory {
 	public final long BACKUP_TIME = 1200000;
 	public long lastBackup = 0;
 	
+	@SuppressWarnings("unused")
 	private ServerThreadHandler handler;
 	
 	public TreeMap<Integer, String> userList;

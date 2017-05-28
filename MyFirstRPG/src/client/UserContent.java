@@ -1,5 +1,6 @@
 package client;
 
+import java.awt.Point;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -11,8 +12,9 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
-import client.gui.Player;
 import debug.DebugMessageFactory;
+import model.CharacterFactory;
+import util.Utils;
 
 public class UserContent implements Serializable {
 
@@ -42,13 +44,20 @@ public class UserContent implements Serializable {
 	public int bag_size;
 	/* users bag containing items */
 	private HashMap<Integer, Integer> bag;
+	/* equipped items 
+	 * key = int position for equipment slot
+	 * value = int id for item
+	 */
+	private HashMap<Integer, Integer> equippedItems;
 	
-	public UserContent(int id) {
-		this.id = id;
+	public UserContent() {
 		this.bag = new HashMap<>();
+		this.equippedItems = new HashMap<>();
 	}
 	
 	public void writeToFile(String path) {
+		
+		Point arrayPos = Utils.adjustCoordinates(x, y);
 		
 		try {
 			
@@ -56,8 +65,8 @@ public class UserContent implements Serializable {
 			
 			bw.write("id:"+id+"\n");
 			bw.write("name:"+name+"\n");
-			bw.write("x:"+x+"\n");
-			bw.write("y:"+y+"\n");
+			bw.write("x:"+arrayPos.x+"\n");
+			bw.write("y:"+arrayPos.y+"\n");
 			bw.write("level:"+level+"\n");
 			bw.write("exp:"+experience+"\n");
 			bw.write("health:"+health+"\n");
@@ -67,8 +76,12 @@ public class UserContent implements Serializable {
 			bw.write("money:"+money+"\n");
 			bw.write("bag_size:"+bag_size+"\n");
 			bw.write("bag_content:");
-			
 			for(Entry<Integer, Integer> e : bag.entrySet()) {
+				bw.write(e.getKey()+"-"+e.getValue()+",");
+			}
+			bw.write("\n");
+			bw.write("equipped:");
+			for(Entry<Integer, Integer> e : equippedItems.entrySet()) {
 				bw.write(e.getKey()+"-"+e.getValue()+",");
 			}
 			bw.write("\n");
@@ -95,7 +108,7 @@ public class UserContent implements Serializable {
 			return createStandard();
 		}
 		
-		UserContent uc = null;
+		UserContent uc = new UserContent();
 		
 		try {
 			
@@ -108,7 +121,7 @@ public class UserContent implements Serializable {
 				
 				switch (lineArray[0]) {
 				case "id":
-					uc = getNewUserContent(Integer.parseInt(lineArray[1]));
+					uc.id = Integer.parseInt(lineArray[1]);
 					break;
 				case "name":
 					uc.name = lineArray[1];
@@ -146,6 +159,9 @@ public class UserContent implements Serializable {
 				case "bag_content":
 					uc.bag = (lineArray.length >= 2) ? fillBag(lineArray[1]) : fillBag("");
 					break;
+				case "equipped":
+					uc.equippedItems = (lineArray.length >= 2) ? parseEquippedItems(lineArray[1]) : parseEquippedItems("");
+					break;
 				}
 			}
 			
@@ -158,10 +174,6 @@ public class UserContent implements Serializable {
 		}
 		
 		return uc;
-	}
-	
-	private static UserContent getNewUserContent(int id) {
-		return new UserContent(id);
 	}
 	
 	private static HashMap<Integer, Integer> fillBag(String content){
@@ -182,20 +194,40 @@ public class UserContent implements Serializable {
 		return map;
 	}
 	
+	private static HashMap<Integer, Integer> parseEquippedItems(String equippedString){
+		HashMap<Integer, Integer> map = new HashMap<>();
+		
+		if(equippedString.equals("")) {
+			return map;
+		}
+		
+		String[] tmp = equippedString.split(",");
+		
+		for (int i = 0; i < tmp.length; i++) {
+			int key = Integer.parseInt(tmp[i].split("-")[0]);
+			int value = Integer.parseInt(tmp[i].split("-")[1]);
+			map.put(key, value);
+		}
+		
+		return map;
+	}
+	
 	public static UserContent createStandard() {
-		UserContent uc = new UserContent(-1);
+		UserContent uc = new UserContent();
+		uc.id = -1;
 		uc.x = 400;
 		uc.y = 400;
-		uc.health = Player.DEFAULT_HEALTH;
-		uc.current_health = Player.DEFAULT_HEALTH;
-		uc.mana = Player.DEFAULT_MANA;
-		uc.current_mana = Player.DEFAULT_MANA;
+		uc.health = CharacterFactory.getHealthForLevel(1);
+		uc.current_health = CharacterFactory.getHealthForLevel(1);
+		uc.mana = 100;
+		uc.current_mana = 100;
 		uc.money = 100;
-		uc.level = Player.DEFAULT_LEVEL;
+		uc.level = 1;
 		uc.experience = 0;
 		uc.name = "StandardName";
-		uc.bag_size = Player.DEFAUL_BAG_SIZE;
+		uc.bag_size = 10;
 		uc.bag = new HashMap<>();
+		uc.equippedItems = new HashMap<>();
 		return uc;
 	}
 
@@ -214,6 +246,23 @@ public class UserContent implements Serializable {
 			bag.put(i, 1);
 		}
 		return true;
+	}
+
+	public HashMap<Integer, Integer> getEquippedItems() {
+		return equippedItems;
+	}
+	
+	public int checkIfEquipped(int itemId) {
+		for(Entry<Integer, Integer> entry : equippedItems.entrySet()) {
+			if(entry.getValue() == itemId) {
+				return entry.getKey();
+			}
+		}
+		return -1;
+	}
+
+	public void setEquippedItems(HashMap<Integer, Integer> equippedItems) {
+		this.equippedItems = equippedItems;
 	}
 	
 }
