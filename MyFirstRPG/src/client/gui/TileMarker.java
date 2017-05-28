@@ -16,27 +16,34 @@ public class TileMarker extends Entity{
 	
 	private boolean isVisible = false;
 	private BufferedImage image;
+	private BufferedImage red;
+	private BufferedImage current;
 	private Game game;
 	
-	public TileMarker(Game game, BufferedImage bimg, int x, int y) {
+	public TileMarker(Game game, BufferedImage bimg, BufferedImage red, int x, int y) {
 		super("tilemarker", bimg, x, y, TileSet.TILEWIDTH, TileSet.TILEHEIGHT);
 		this.game = game;
 		this.image = bimg;
+		this.red = red;
+		this.current = image;
 	}
 
 	@Override
 	protected void render(Graphics g) {
 		if(this.isVisible) {
-			g.drawImage(image, entityX - game.getGameCamera().getxOffset(), entityY - game.getGameCamera().getyOffset(), width, height, null);
+			g.drawImage(current, entityX - game.getGameCamera().getxOffset(), entityY - game.getGameCamera().getyOffset(), width, height, null);
 		}
 	}
 
 	@Override
 	protected void update() {
-		setEntityImage(image);
 		if(game.player.isFollowing) {
-			Point markerPoint = Utils.adjustCoordinates(game.player.follows.entityX, game.player.follows.entityY);
+			current = red;
+//			Point markerPoint = Utils.adjustCoordinates(game.player.follows.entityX, game.player.follows.entityY);
+			Point markerPoint = new Point(game.player.follows.entityX, game.player.follows.entityY);
 			setNewPosition(markerPoint.x, markerPoint.y);
+		}else {
+			current = image;
 		}
 	}
 
