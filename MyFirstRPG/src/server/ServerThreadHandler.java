@@ -55,11 +55,14 @@ public class ServerThreadHandler extends Thread {
 		
 		npcs = new HashSet<>();
 		
-		NPCData d1 = new NPCData(1, 1, 128, 128, 3, 100, 100);
-//		NPCData d2 = new NPCData(2, 2, 640, 640, 12, 100, 100);
-		
-		addNPC(d1);
+//		NPCData d1 = new NPCData(1, 1, 128, 128, 3, 100, 100);
+//		NPCData d2 = new NPCData(2, 1, 128, 320, 3, 100, 100);
+//		NPCData d3 = new NPCData(3, 2, 640, 320, 12, 100, 100);
+//		NPCData d4 = new NPCData(4, 2, 320, 640, 12, 100, 100);
+//		addNPC(d1);
 //		addNPC(d2);
+//		addNPC(d3);
+//		addNPC(d4);
 		
 		spawnThread = new CreatureSpawnThread(this);
 		

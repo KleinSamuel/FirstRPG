@@ -110,6 +110,25 @@ public class ServerThread extends Thread{
 		case "download_tilemarker":
 			sendFile(FilePathFactory.BASE_DIR+"/tilemarker.png");
 			break;
+		case "download_tilemarker_red":
+			sendFile(FilePathFactory.BASE_DIR+"/tilemarker_red.png");
+			break;
+			
+		case "download_inventory_background":
+			sendFile(FilePathFactory.BASE_DIR+"/Inventar960x540.png");
+			break;
+			
+		case "download_item_selected_background":
+			sendFile(FilePathFactory.BASE_DIR+"/hud/item_selected_background.png");
+			break;
+			
+		case "download_bag_close_button":
+			sendFile(FilePathFactory.BASE_DIR+"/hud/bag_close_button.png");
+			break;
+			
+		case "download_use_button_1":
+			sendFile(FilePathFactory.BASE_DIR+"/hud/use_button_1.png");
+			break;
 			
 		case "download_hud_menu":
 			sendFile(FilePathFactory.BASE_DIR+"/hud/menu.png");
@@ -130,6 +149,10 @@ public class ServerThread extends Thread{
 			
 		case "download_arrows_1":
 			sendFile(FilePathFactory.BASE_DIR+"/items/arrows_1.png");
+			break;
+			
+		case "download_helmet_3":
+			sendFile(FilePathFactory.BASE_DIR+"/items/helmet_3.png");
 			break;
 			
 		/* NPCs */

@@ -66,39 +66,25 @@ public class Utils {
 		return new Font("arial", Font.BOLD, size);
 	}
 	
-	private static Font getFont(String name) {
-		Font font = null;
-		if (name == null) {
-			return SERIF_FONT;
-		}
-
+	public static Font getPixelFont() {
+		Font customFont = null;
 		try {
-			File fontFile = new File(name);
-			font = Font.createFont(Font.TRUETYPE_FONT, fontFile);
-			font.deriveFont(50);
-			GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-			ge.registerFont(font);
-
-		} catch (Exception ex) {
-			System.out.println(name + " not loaded.  Using serif font.");
-			font = SERIF_FONT;
+			File fontFile = new File(FilePathFactory.BASE_DIR+"/fonts/enchanted.otf");
+		    customFont = Font.createFont(Font.TRUETYPE_FONT, fontFile).deriveFont(12f);
+		    GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+		    ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, fontFile));
+		} catch (IOException e) {
+		    e.printStackTrace();
+		} catch(FontFormatException e) {
+		    e.printStackTrace();
 		}
-		return font;
+		return customFont;
 	}
 
 	public static void setFontForPlayerName(int size) {
-
-		// Font f = importFontFromURL("http://www.webpagepublicity.com/free-fonts/a/Airacobra%20Condensed.ttf");
-//		Font f = importFontFromFile("/home/sam/RPG/pixel_font.ttf");
-//		System.out.println("FONT NULL? " + (f == null));
-//		// f.deriveFont(Font.PLAIN, size);
-//		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-//		ge.registerFont(f);
-//		playerNameFont = f;
 		
-//		playerNameFont = getFont("/home/sam/RPG/pixel_font.ttf");
-		
-		playerNameFont = SERIF_FONT;
+//		playerNameFont = SERIF_FONT;
+		playerNameFont = getPixelFont();
 	}
 
 	public static Font importFontFromFile(String path) {

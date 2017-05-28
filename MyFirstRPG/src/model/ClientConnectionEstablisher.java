@@ -97,7 +97,33 @@ public class ClientConnectionEstablisher {
 		sendRequest("download_tilemarker");
 		FileEvent tilemarkerEvent = downloadFileEvent();
 		fileManager.tileMarkerImage = FileEvent.byteArrayToBufferedImage(tilemarkerEvent.getFileData());
+		sendRequest("download_tilemarker_red");
+		FileEvent tilemarkerRedEvent = downloadFileEvent();
+		fileManager.tileMarkerRedImage = FileEvent.byteArrayToBufferedImage(tilemarkerRedEvent.getFileData());
 		DebugMessageFactory.printNormalMessage("\tDownloaded tilemarker.");
+		
+		/* download inventory background image */
+		sendRequest("download_inventory_background");
+		FileEvent inventoryBgEvent = downloadFileEvent();
+		fileManager.inventoryImage = FileEvent.byteArrayToBufferedImage(inventoryBgEvent.getFileData());
+		DebugMessageFactory.printNormalMessage("\tDownloaded inventory background.");
+		
+		/* download selected item background */
+		sendRequest("download_item_selected_background");
+		FileEvent itemSelEvent = downloadFileEvent();
+		fileManager.item_selected_background = FileEvent.byteArrayToBufferedImage(itemSelEvent.getFileData());
+		DebugMessageFactory.printNormalMessage("\tDownloaded item selected background.");
+		
+		/* download bag close button */
+		sendRequest("download_bag_close_button");
+		FileEvent bagCloseButtonEvent = downloadFileEvent();
+		fileManager.bag_close_button_image = FileEvent.byteArrayToBufferedImage(bagCloseButtonEvent.getFileData());
+		DebugMessageFactory.printNormalMessage("\tDownloaded bag close button.");
+		
+		sendRequest("download_use_button_1");
+		FileEvent useButtonEvent = downloadFileEvent();
+		fileManager.use_button_1_image = FileEvent.byteArrayToBufferedImage(useButtonEvent.getFileData());
+		DebugMessageFactory.printNormalMessage("\tDownloaded use button.");
 		
 		/* download hud menu button */
 		sendRequest("download_hud_menu");
@@ -123,11 +149,17 @@ public class ClientConnectionEstablisher {
 		fileManager.mana_1_image = FileEvent.byteArrayToBufferedImage(potionMana_1_Event.getFileData());
 		DebugMessageFactory.printNormalMessage("\tDownloaded potion mana 1.");
 		
-		/* download potion mana 1 */
+		/* download arrows 1 */
 		sendRequest("download_arrows_1");
 		FileEvent arrows_1_Event = downloadFileEvent();
 		fileManager.arrows_1_image = FileEvent.byteArrayToBufferedImage(arrows_1_Event.getFileData());
 		DebugMessageFactory.printNormalMessage("\tDownloaded arrow 1.");
+		
+		/* download helmet 3 */
+		sendRequest("download_helmet_3");
+		FileEvent helmet_3_Event = downloadFileEvent();
+		fileManager.helmet_3_image = FileEvent.byteArrayToBufferedImage(helmet_3_Event.getFileData());
+		DebugMessageFactory.printNormalMessage("\tDownloaded helmet 3.");
 		
 		/* download npc eyeball */
 		sendRequest("download_npc_eyeball_1");
